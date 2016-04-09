@@ -9,8 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.print.attribute.standard.JobSheets;
-
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
@@ -21,7 +19,7 @@ public class Servidor extends Thread implements Runnable,IServer {
 	private static final int PORTA_TCPIP = 1818;
 	
 	// Formatador de data.
-	private SimpleDateFormat sdf = new SimpleDateFormat("'[Servidor] 'dd/mm/yy H:mm:ss:SSS' -> '");
+	private SimpleDateFormat sdf = new SimpleDateFormat("'[Servidor Principal] 'dd/mm/yy H:mm:ss:SSS' -> '");
 	
 	@Override
 	public void run() {
@@ -85,6 +83,13 @@ public class Servidor extends Thread implements Runnable,IServer {
 	public void desconectar(Cliente c) throws RemoteException {
 		
 
+	}
+	
+	
+	public static void main(String[] args) {
+		
+		new Servidor().start();
+		
 	}
 
 }

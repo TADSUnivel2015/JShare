@@ -1,10 +1,15 @@
 package br.tezza.servidor;
 
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import javax.print.attribute.standard.JobSheets;
 
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
@@ -21,11 +26,28 @@ public class Servidor extends Thread implements Runnable,IServer {
 	@Override
 	public void run() {
 		
-		mensagemConsoleServidor("Servidor em execução...");
+		mensagemConsoleServidor("Servidor em execução.");
 		
-		super.run();
+		IServer iServer;
+		
+		try {
+			
+			iServer = (IServer) UnicastRemoteObject.exportObject(Servidor.this, 0);
+		
+			Registry registry = LocateRegistry.createRegistry(PORTA_TCPIP);
+			
+			registry.rebind(IServer.NOME_SERVICO, iServer);
+			
+			mensagemConsoleServidor("Aguardando usuários.");
+			
+		} catch (RemoteException e) {
+			System.err.println("\n\n---------------------------------------\n"
+					+ "Pode ser que o Servidor já esteja em execução ou algum"
+					+ " outro programa esteja usando a mesma porta");
+			e.printStackTrace();
+		}
+		
 	}
-	
 	
 	// Método que informa que o servidor está em execução.
 	private void mensagemConsoleServidor(String mensagem) {
@@ -37,7 +59,7 @@ public class Servidor extends Thread implements Runnable,IServer {
 
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
-		// TODO Auto-generated method stub
+		
 
 	}
 
@@ -61,7 +83,7 @@ public class Servidor extends Thread implements Runnable,IServer {
 
 	@Override
 	public void desconectar(Cliente c) throws RemoteException {
-		// TODO Auto-generated method stub
+		
 
 	}
 

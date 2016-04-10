@@ -12,14 +12,17 @@ import java.util.Map;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
+import br.tezza.simple.date.format.DateFormat;
 
 public class Servidor extends Thread implements Runnable,IServer {
+	
+	DateFormat dateFormat = new DateFormat();
 
 	// Porta na qual o cliente irá se conectar.
 	private static final int PORTA_TCPIP = 1818;
 	
 	// Formatador de data.
-	private SimpleDateFormat sdf = new SimpleDateFormat("'[Servidor Principal] 'dd/mm/yy H:mm:ss:SSS' -> '");
+	private SimpleDateFormat sdf = dateFormat.formatoData("Servidor de Pesquisa");
 	
 	@Override
 	public void run() {
@@ -39,9 +42,12 @@ public class Servidor extends Thread implements Runnable,IServer {
 			mensagemConsoleServidor("Aguardando usuários.");
 			
 		} catch (RemoteException e) {
-			System.err.println("\n\n---------------------------------------\n"
+			System.err.println("\n\n-------------------------------------------"
+					+ "------------------------------------------------------\n"
 					+ "Pode ser que o Servidor já esteja em execução ou algum"
-					+ " outro programa esteja usando a mesma porta");
+					+ " outro programa esteja usando a mesma porta"
+					+ "\n-------------------------------------------------------"
+					+ "------------------------------------------\n");
 			e.printStackTrace();
 		}
 		

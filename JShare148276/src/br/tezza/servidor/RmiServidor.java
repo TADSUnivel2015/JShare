@@ -70,6 +70,9 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
 		
+		System.out.println("Usuário " + c.getNome() + " se conectou com o Servidor.");
+		System.out.println("IP: " + c.getIp());
+		System.out.println("Porta: " + c.getPorta());
 
 	}
 

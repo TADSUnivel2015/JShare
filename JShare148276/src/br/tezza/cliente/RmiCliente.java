@@ -7,13 +7,30 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
 import br.tezza.simple.date.format.DateFormat;
 
 public class RmiCliente {
 	
 	DateFormat dataFormat = new DateFormat();
+	
+	/**
+	 * 
+	 * Trecho de testes.............................................
+	 * 
+	 * 
+	 */
 
+	Cliente cliente = new Cliente();	
+	
+	/**
+	 * 
+	 * 
+	 * Termina aqui.................................................
+	 * 
+	 */
+	
 	
 	private SimpleDateFormat sdf = dataFormat.formatoData("Cliente");
 	
@@ -24,7 +41,26 @@ public class RmiCliente {
 		try {
 			IServer iServer = (IServer) Naming.lookup("rmi://localhost:1818/" + IServer.NOME_SERVICO);
 			
-
+			/**
+			 * 
+			 * Trecho de testes.............................................
+			 * 
+			 * 
+			 */
+			
+			cliente.setNome("Alex");
+			cliente.setIp("127.0.0.1");
+			cliente.setPorta(1818);
+			
+			iServer.registrarCliente(cliente);
+			
+			
+			/**
+			 * 
+			 * 
+			 * Termina aqui.................................................
+			 * 
+			 */
 			
 			
 		} catch (Exception e) {
@@ -42,6 +78,6 @@ public class RmiCliente {
 	}
 	
 	public static void main(String[] args) {
-		new Cliente();
+		new RmiCliente();
 	}
 }

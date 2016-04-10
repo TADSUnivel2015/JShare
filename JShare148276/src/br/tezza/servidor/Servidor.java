@@ -14,14 +14,24 @@ import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
 import br.tezza.simple.date.format.DateFormat;
 
-public class Servidor extends Thread implements Runnable,IServer {
+public class Servidor extends UnicastRemoteObject implements Runnable,IServer {
 	
+	private static final long serialVersionUID = 1L;
+	
+	protected Servidor() throws RemoteException {
+		super();
+		
+		new Thread(this).start();
+	}
+
+	// Instânciando um objeto do tipo 'DateFormat' para poder utilizar o método dele,
+	// que faz a formatação das datas.
 	DateFormat dateFormat = new DateFormat();
 
 	// Porta na qual o cliente irá se conectar.
 	private static final int PORTA_TCPIP = 1818;
 	
-	// Formatador de data.
+	// Formatador de data por meio do método da classe 'DateFormat'.
 	private SimpleDateFormat sdf = dateFormat.formatoData("Servidor de Pesquisa");
 	
 	@Override
@@ -32,14 +42,12 @@ public class Servidor extends Thread implements Runnable,IServer {
 		IServer iServer;
 		
 		try {
-			
-			iServer = (IServer) UnicastRemoteObject.exportObject(Servidor.this, 0);
 		
 			Registry registry = LocateRegistry.createRegistry(PORTA_TCPIP);
 			
-			registry.rebind(IServer.NOME_SERVICO, iServer);
+			registry.rebind(IServer.NOME_SERVICO, this);
 			
-			mensagemConsoleServidor("Aguardando usuários.");
+			mensagemConsoleServidor("Aguardando conexões.");
 			
 		} catch (RemoteException e) {
 			System.err.println("\n\n-------------------------------------------"
@@ -94,7 +102,12 @@ public class Servidor extends Thread implements Runnable,IServer {
 	
 	public static void main(String[] args) {
 		
-		new Servidor().start();
+		try {
+			new Servidor();
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

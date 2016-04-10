@@ -14,11 +14,11 @@ import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
 import br.tezza.simple.date.format.DateFormat;
 
-public class Servidor extends UnicastRemoteObject implements Runnable,IServer {
+public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer {
 	
 	private static final long serialVersionUID = 1L;
 	
-	protected Servidor() throws RemoteException {
+	protected RmiServidor() throws RemoteException {
 		super();
 		
 		new Thread(this).start();
@@ -101,7 +101,7 @@ public class Servidor extends UnicastRemoteObject implements Runnable,IServer {
 	public static void main(String[] args) {
 		
 		try {
-			new Servidor();
+			new RmiServidor();
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -39,8 +39,6 @@ public class Servidor extends UnicastRemoteObject implements Runnable,IServer {
 		
 		mensagemConsoleServidor("Servidor em execução.");
 		
-		IServer iServer;
-		
 		try {
 		
 			Registry registry = LocateRegistry.createRegistry(PORTA_TCPIP);

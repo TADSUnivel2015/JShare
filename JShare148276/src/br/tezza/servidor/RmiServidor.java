@@ -6,6 +6,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,9 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 		
 		new Thread(this).start();
 	}
+	
+	private Map<Integer, Cliente> listaClientes = new HashMap<Integer, Cliente>();
+	
 
 	// Instânciando um objeto do tipo 'DateFormat' para poder utilizar o método dele,
 	// que faz a formatação das datas.
@@ -70,9 +74,19 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
 		
-		System.out.println("Usuário " + c.getNome() + " se conectou com o Servidor.");
-		System.out.println("IP: " + c.getIp());
-		System.out.println("Porta: " + c.getPorta());
+		if (listaClientes.isEmpty()) {
+			
+			listaClientes.put(0, c);
+		} else {
+			
+			listaClientes.put(listaClientes.size() + 1, c);
+		}
+		
+		/**
+		 * System.out.println(listaClientes.get(0).getNome());
+		 * System.out.println(listaClientes.get(0).getIp());
+		 * System.out.println(listaClientes.get(0).getPorta());
+		 */
 
 	}
 

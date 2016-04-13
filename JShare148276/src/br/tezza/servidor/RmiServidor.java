@@ -1,5 +1,6 @@
 package br.tezza.servidor;
 
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -20,7 +21,7 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	
 	private static final long serialVersionUID = 1L;
 	
-	protected RmiServidor() throws RemoteException {
+	public RmiServidor() throws RemoteException {
 		super();
 		
 		new Thread(this).start();
@@ -29,6 +30,8 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	private Map<String, Cliente> listaClientes = new HashMap<String, Cliente>();
 	
 	private Map<Cliente, List<Arquivo>> listaArquivosCliente = new HashMap<Cliente, List<Arquivo>>();
+	
+	private Registry registry;
 	
 
 	// Instânciando um objeto do tipo 'DateFormat' para poder utilizar o método dele,
@@ -48,7 +51,7 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 		
 		try {
 		
-			Registry registry = LocateRegistry.createRegistry(PORTA_TCPIP);
+			registry = LocateRegistry.createRegistry(PORTA_TCPIP);
 			
 			registry.rebind(IServer.NOME_SERVICO, this);
 			
@@ -67,12 +70,28 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	}
 	
 	// Método que informa que o servidor está em execução.
-	private void mensagemConsoleServidor(String mensagem) {
+	public void mensagemConsoleServidor(String mensagem) {
 		
 		System.out.println(sdf.format(new Date()) + mensagem);
 		
 	}
 
+	public void encerrarServidor(){
+		
+		try {
+			UnicastRemoteObject.unexportObject(this, true);
+			UnicastRemoteObject.unexportObject(registry, true);
+		} catch (NoSuchObjectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void fecharClientes() {
+		
+		listaClientes = null;
+	}
 
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
@@ -80,6 +99,7 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 		listaClientes.put(c.getIp(), c);
  
 	}
+
 
 	@Override
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
@@ -103,7 +123,6 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	public void desconectar(Cliente c) throws RemoteException {		
 		
 		listaClientes.remove(c.getIp());			
-
 	}
 	
 	

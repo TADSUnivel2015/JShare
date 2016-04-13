@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
+
+import br.tezza.servidor.RmiServidor;
+
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.DefaultComboBoxModel;
@@ -22,6 +25,8 @@ import java.awt.event.ActionListener;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -41,6 +46,8 @@ public class InterfaceGraficaServidor extends JFrame {
 	private JButton btnIniciarServidor;
 	private JComboBox cbxIp;
 	private JTextArea txtArea;
+	
+	private RmiServidor servidor;
 
 	/**
 	 * Launch the application.
@@ -125,7 +132,6 @@ public class InterfaceGraficaServidor extends JFrame {
 				bloquearCampos(true);
 				
 				txtArea.setText("Desligando servidor...");
-
 			}
 		});
 		panel_1.add(btnPararServidor);

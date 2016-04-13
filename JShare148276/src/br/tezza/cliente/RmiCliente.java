@@ -22,7 +22,10 @@ public class RmiCliente {
 	 * 
 	 */
 
-	Cliente cliente = new Cliente();	
+	Cliente cliente1 = new Cliente();
+	Cliente cliente2 = new Cliente();
+	Cliente cliente3 = new Cliente();
+	Cliente cliente4 = new Cliente();
 	
 	/**
 	 * 
@@ -48,11 +51,33 @@ public class RmiCliente {
 			 * 
 			 */
 			
-			cliente.setNome("Alex");
-			cliente.setIp("127.0.0.1");
-			cliente.setPorta(1818);
+			cliente1.setNome("Alex");
+			cliente1.setIp("127.0.0.1");
+			cliente1.setPorta(1818);
 			
-			iServer.registrarCliente(cliente);
+			iServer.registrarCliente(cliente1);
+			
+			cliente2.setNome("Maria");
+			cliente2.setIp("127.0.0.2");
+			cliente2.setPorta(1818);
+			
+			iServer.registrarCliente(cliente2);
+			
+			cliente3.setNome("José");
+			cliente3.setIp("127.0.0.3");
+			cliente3.setPorta(1818);
+			
+			iServer.registrarCliente(cliente3);
+			
+			cliente4.setNome("Andersom");
+			cliente4.setIp("127.0.0.4");
+			cliente4.setPorta(1818);
+			
+			iServer.registrarCliente(cliente4);
+			
+			System.out.println("paranaue");
+			
+			iServer.desconectar(cliente2);
 			
 			
 			/**

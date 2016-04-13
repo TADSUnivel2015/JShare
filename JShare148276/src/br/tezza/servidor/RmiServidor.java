@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
@@ -25,7 +26,9 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 		new Thread(this).start();
 	}
 	
-	private Map<Integer, Cliente> listaClientes = new HashMap<Integer, Cliente>();
+	private Map<String, Cliente> listaClientes = new HashMap<String, Cliente>();
+	
+	private Map<Cliente, List<Arquivo>> listaArquivosCliente = new HashMap<Cliente, List<Arquivo>>();
 	
 
 	// Instânciando um objeto do tipo 'DateFormat' para poder utilizar o método dele,
@@ -73,21 +76,9 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
-		
-		if (listaClientes.isEmpty()) {
 			
-			listaClientes.put(0, c);
-		} else {
-			
-			listaClientes.put(listaClientes.size() + 1, c);
-		}
-		
-		/**
-		 * System.out.println(listaClientes.get(0).getNome());
-		 * System.out.println(listaClientes.get(0).getIp());
-		 * System.out.println(listaClientes.get(0).getPorta());
-		 */
-
+		listaClientes.put(c.getIp(), c);
+ 
 	}
 
 	@Override
@@ -109,8 +100,9 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	}
 
 	@Override
-	public void desconectar(Cliente c) throws RemoteException {
+	public void desconectar(Cliente c) throws RemoteException {		
 		
+		listaClientes.remove(c.getIp());			
 
 	}
 	

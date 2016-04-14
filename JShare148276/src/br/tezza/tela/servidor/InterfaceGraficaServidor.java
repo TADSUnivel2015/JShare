@@ -176,6 +176,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	private Map<String, Cliente> listaClientes = new HashMap<String, Cliente>();	
 	private Map<Cliente, List<Arquivo>> listaArquivosCliente = new HashMap<Cliente, List<Arquivo>>();
+	private Map<Cliente, List<Arquivo>> listaArquivosEncontrados = new HashMap<Cliente, List<Arquivo>>();
 
 	SimpleDateFormat dateFormat = new DateFormat().formatoData();
 
@@ -195,19 +196,22 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
-		// TODO Auto-generated method stub
+		
+		listaClientes.put(c.getIp(), c);
+		escreverTela("Novo usuário: " + c.getNome());
 
 	}
 
 	@Override
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
-		// TODO Auto-generated method stub
+		
+		listaArquivosCliente.put(c, lista);
 
 	}
 
 	@Override
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -219,7 +223,9 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	@Override
 	public void desconectar(Cliente c) throws RemoteException {
-		// TODO Auto-generated method stub
+		
+		listaClientes.remove(c.getIp());		
+		escreverTela("Usuário " + c.getNome() + "saiu.");
 
 	}
 

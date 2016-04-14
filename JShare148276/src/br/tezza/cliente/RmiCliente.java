@@ -35,7 +35,7 @@ public class RmiCliente {
 	 */
 	
 	
-	private SimpleDateFormat sdf = dataFormat.formatoData("Cliente");
+	private SimpleDateFormat sdf = dataFormat.formatoData();
 	
 	public RmiCliente() {
 		

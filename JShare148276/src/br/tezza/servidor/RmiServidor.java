@@ -42,10 +42,12 @@ public class RmiServidor extends UnicastRemoteObject implements Runnable,IServer
 	private static final int PORTA_TCPIP = 1818;
 	
 	// Formatador de data por meio do método da classe 'DateFormat'.
-	private SimpleDateFormat sdf = dateFormat.formatoData("Servidor de Pesquisa");
+	private SimpleDateFormat sdf = dateFormat.formatoData();
 	
 	@Override
 	public void run() {
+		
+		int PORTA_TCPIP = 1818;
 		
 		mensagemConsoleServidor("Servidor em execução.");
 		

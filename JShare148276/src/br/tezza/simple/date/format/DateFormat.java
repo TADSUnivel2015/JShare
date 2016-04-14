@@ -6,10 +6,9 @@ public class DateFormat {
 	
 	private SimpleDateFormat sdf;
 	
-	// Irei utilizar este método formatador de datas nas classe 'Cliente' e 'Servidor'.
-	public SimpleDateFormat formatoData(String nome){
+	public SimpleDateFormat formatoData(){
 		
-		sdf = new SimpleDateFormat("'[" + nome +  "] 'dd/MM/yyyy H:mm:ss:SSS' -> '");
+		sdf = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
 		
 		return sdf;
 	}

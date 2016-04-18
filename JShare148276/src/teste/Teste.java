@@ -123,6 +123,10 @@ public class Teste {
 
 		}
 		
+		System.out.println("====================================================================\n\n");
+		System.out.println("Arquivos encontrados");
+		System.out.println("\n\n====================================================================");
+		
 		
 		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosEncontrados.entrySet()) {
 			

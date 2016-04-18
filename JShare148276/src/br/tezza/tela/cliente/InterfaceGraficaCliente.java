@@ -26,6 +26,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JTextField txtNomeUsuario;
 	private JTextField txtBuscaArquivo;
 	private JTable tabelaResultadoBusca;
+	private JTextField textField;
+	private JTextField textField_1;
 
 	/**
 	 * Launch the application.
@@ -48,7 +50,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	 */
 	public InterfaceGraficaCliente() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 557, 300);
+		setBounds(100, 100, 557, 449);
 		contentPane = new JPanel();
 		contentPane.setToolTipText("Digite aqui sua busca...");
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -56,7 +58,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(5, 5, 526, 74);
+		panel.setBounds(5, 5, 526, 133);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
@@ -70,30 +72,46 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtNomeUsuario.setColumns(10);
 		
 		JButton btnDisponibilizarMeusArquivos = new JButton("Disponibilizar meus arquivos");
-		btnDisponibilizarMeusArquivos.setBounds(205, 5, 206, 23);
+		btnDisponibilizarMeusArquivos.setBounds(205, 64, 206, 23);
 		panel.add(btnDisponibilizarMeusArquivos);
 		
 		JButton btnConectar = new JButton("Conectar");
-		btnConectar.setBounds(421, 5, 95, 23);
+		btnConectar.setBounds(421, 64, 95, 23);
 		panel.add(btnConectar);
 		
 		txtBuscaArquivo = new JTextField();
 		txtBuscaArquivo.setToolTipText("");
 		txtBuscaArquivo.setColumns(10);
-		txtBuscaArquivo.setBounds(10, 37, 309, 20);
+		txtBuscaArquivo.setBounds(10, 98, 309, 20);
 		panel.add(txtBuscaArquivo);
 		
 		JButton btnNewButton = new JButton("Buscar Arquivo");
-		btnNewButton.setBounds(322, 36, 194, 23);
+		btnNewButton.setBounds(322, 97, 194, 23);
 		panel.add(btnNewButton);
 		
-		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(5, 90, 526, 160);
-		contentPane.add(panel_1);
-		panel_1.setLayout(new BorderLayout(0, 0));
+		JLabel lblIp = new JLabel("IP:");
+		lblIp.setBounds(10, 40, 39, 14);
+		panel.add(lblIp);
+		
+		textField = new JTextField();
+		textField.setText("127.0.0.1");
+		textField.setBounds(59, 37, 136, 20);
+		panel.add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblPorta = new JLabel("Porta:");
+		lblPorta.setBounds(205, 39, 46, 14);
+		panel.add(lblPorta);
+		
+		textField_1 = new JTextField();
+		textField_1.setText("1818");
+		textField_1.setBounds(261, 37, 86, 20);
+		panel.add(textField_1);
+		textField_1.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		panel_1.add(scrollPane, BorderLayout.CENTER);
+		scrollPane.setBounds(5, 149, 526, 250);
+		contentPane.add(scrollPane);
 		
 		tabelaResultadoBusca = new JTable();
 		scrollPane.setViewportView(tabelaResultadoBusca);

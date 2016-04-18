@@ -177,7 +177,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	private Map<Cliente, List<Arquivo>> listaArquivosCliente = new HashMap<Cliente, List<Arquivo>>();
 	private Map<Cliente, List<Arquivo>> listaArquivosEncontrados = new HashMap<Cliente, List<Arquivo>>();
 
-	SimpleDateFormat dateFormat = new DateFormat().formatoData();
+	private SimpleDateFormat dateFormat = new DateFormat().formatoData();
 
 	private IServer iServer;
 
@@ -281,7 +281,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			UnicastRemoteObject.unexportObject(this, true);
 			UnicastRemoteObject.unexportObject(registry, true);
 
-			escreverTela("O servidor está sendo encerrado");
+			escreverTela("O servidor foi encerrado");
 
 			bloquearBotoes(false);		
 			bloquearCampos(true);

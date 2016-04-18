@@ -18,7 +18,6 @@ import javax.swing.border.TitledBorder;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
-import br.tezza.servidor.RmiServidor;
 import br.tezza.simple.date.format.DateFormat;
 
 import javax.swing.JComboBox;
@@ -212,7 +211,19 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	@Override
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
 		
-		return null;
+		// Percorrendo a HashMap principal.
+		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosCliente.entrySet()) {
+			
+			for(Arquivo arquivo: listaArquivosCliente.get(listaProcura.getKey())){
+				
+				System.out.println(arquivo.getNome());
+				System.out.println(arquivo.getTamanho());
+			}
+			
+		}
+		
+		
+		return listaArquivosEncontrados;
 	}
 
 	@Override

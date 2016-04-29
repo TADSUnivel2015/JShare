@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JComboBox;
 
 public class InterfaceGraficaCliente extends JFrame implements IServer{
 
@@ -36,8 +37,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JTextField txtNomeUsuario;
 	private JTextField txtBuscaArquivo;
 	private JTable tabelaResultadoBusca;
-	private JTextField txtIp;
-	private JTextField txtPorta;
+	private JTextField txtIpServidor;
+	private JTextField txtMinhaPorta;
 
 	/**
 	 * Launch the application.
@@ -68,59 +69,85 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		contentPane.setLayout(null);
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(5, 5, 526, 133);
+		panel.setBounds(5, 5, 526, 206);
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
 		JLabel lblNome = new JLabel("Nome:");
-		lblNome.setBounds(10, 9, 39, 14);
+		lblNome.setBounds(32, 9, 39, 14);
 		panel.add(lblNome);
 		
 		txtNomeUsuario = new JTextField();
-		txtNomeUsuario.setBounds(59, 6, 136, 20);
+		txtNomeUsuario.setBounds(89, 6, 106, 20);
 		panel.add(txtNomeUsuario);
 		txtNomeUsuario.setColumns(10);
 		
 		JButton btnDisponibilizarMeusArquivos = new JButton("Disponibilizar meus arquivos");
-		btnDisponibilizarMeusArquivos.setBounds(205, 64, 206, 23);
+		btnDisponibilizarMeusArquivos.setBounds(10, 110, 278, 23);
 		panel.add(btnDisponibilizarMeusArquivos);
 		
 		JButton btnConectar = new JButton("Conectar");
-		btnConectar.setBounds(421, 64, 95, 23);
+		btnConectar.setBounds(298, 110, 95, 23);
 		panel.add(btnConectar);
 		
 		txtBuscaArquivo = new JTextField();
 		txtBuscaArquivo.setToolTipText("");
 		txtBuscaArquivo.setColumns(10);
-		txtBuscaArquivo.setBounds(10, 98, 309, 20);
+		txtBuscaArquivo.setBounds(10, 173, 278, 20);
 		panel.add(txtBuscaArquivo);
 		
 		JButton btnBuscarArquivo = new JButton("Buscar Arquivo");
-		btnBuscarArquivo.setBounds(322, 97, 194, 23);
+		btnBuscarArquivo.setBounds(298, 172, 218, 23);
 		panel.add(btnBuscarArquivo);
 		
-		JLabel lblIp = new JLabel("IP:");
-		lblIp.setBounds(10, 40, 39, 14);
+		JLabel lblIp = new JLabel("IP Servidor:");
+		lblIp.setBounds(10, 40, 89, 14);
 		panel.add(lblIp);
 		
-		txtIp = new JTextField();
-		txtIp.setText("127.0.0.1");
-		txtIp.setBounds(59, 37, 136, 20);
-		panel.add(txtIp);
-		txtIp.setColumns(10);
+		txtIpServidor = new JTextField();
+		txtIpServidor.setText("127.0.0.1");
+		txtIpServidor.setBounds(89, 37, 106, 20);
+		panel.add(txtIpServidor);
+		txtIpServidor.setColumns(10);
 		
-		JLabel lblPorta = new JLabel("Porta:");
-		lblPorta.setBounds(205, 39, 46, 14);
+		JLabel lblPorta = new JLabel("Porta Servidor:");
+		lblPorta.setBounds(205, 39, 103, 14);
 		panel.add(lblPorta);
 		
-		txtPorta = new JTextField();
-		txtPorta.setText("1818");
-		txtPorta.setBounds(261, 37, 86, 20);
-		panel.add(txtPorta);
-		txtPorta.setColumns(10);
+		txtMinhaPorta = new JTextField();
+		txtMinhaPorta.setText("1415");
+		txtMinhaPorta.setBounds(298, 79, 95, 20);
+		panel.add(txtMinhaPorta);
+		txtMinhaPorta.setColumns(10);
+		
+		JButton btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnDesconectar.setBounds(403, 110, 113, 23);
+		panel.add(btnDesconectar);
+		
+		JLabel lblSeuIp = new JLabel("Seu IP:");
+		lblSeuIp.setBounds(32, 81, 46, 14);
+		panel.add(lblSeuIp);
+		
+		cbxMeuIP = new JComboBox();
+		cbxMeuIP.setBounds(89, 78, 106, 20);
+		panel.add(cbxMeuIP);
+		
+		JLabel lblPortaDisponvel = new JLabel("Porta Dispon\u00EDvel ");
+		lblPortaDisponvel.setBounds(205, 81, 86, 14);
+		panel.add(lblPortaDisponvel);
+		
+		txtPortaServidor = new JTextField();
+		txtPortaServidor.setText("1818");
+		txtPortaServidor.setBounds(298, 37, 95, 20);
+		panel.add(txtPortaServidor);
+		txtPortaServidor.setColumns(10);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(5, 149, 526, 250);
+		scrollPane.setBounds(5, 222, 526, 177);
 		contentPane.add(scrollPane);
 		
 		tabelaResultadoBusca = new JTable();
@@ -192,6 +219,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private InterfaceGraficaServidor servidor;
 	
 	private String meuNome;
+	private JTextField txtPortaServidor;
+	private JComboBox cbxMeuIP;
 	
 	
 	/**
@@ -210,13 +239,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			return;
 		}
 		
-		String host = txtIp.getText().trim();
+		String host = txtIpServidor.getText().trim();
 		if (!host.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")) {
 			JOptionPane.showMessageDialog(this, "Endereço IP é inválido, por gentileza, informe outro.");
 			return;
 		}
 		
-		String strPorta = txtPorta.getText().trim();
+		String strPorta = txtMinhaPorta.getText().trim();
 		if (!strPorta.matches("[0-9]+") || strPorta.length() > 5){
 			JOptionPane.showMessageDialog(this, "O número da porta deve ser um valor de no máximo 5 digitos!");
 			return;
@@ -238,8 +267,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			Cliente cliente = new Cliente();
 			
 			cliente.setNome(txtNomeUsuario.getText());
-			cliente.setIp(txtIp.getText());
-			cliente.setPorta(Integer.parseInt(txtPorta.getText()));
+			cliente.setIp(cbxMeuIP.getSelectedItem().toString());
+			cliente.setPorta(Integer.parseInt(txtMinhaPorta.getText()));
 			
 			iServer.registrarCliente(cliente);
 			
@@ -256,8 +285,4 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		
 		
 	}
-	
-	
-	
-	
 }

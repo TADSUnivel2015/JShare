@@ -18,6 +18,7 @@ import javax.swing.border.TitledBorder;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
+import br.tezza.buscaIP.ListaIP;
 import br.tezza.simple.date.format.DateFormat;
 
 import javax.swing.JComboBox;
@@ -56,6 +57,8 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	private JButton btnIniciarServidor;
 	private JComboBox cbxIp;
 	private JTextArea txtArea;
+	
+	private ListaIP listaIP = new ListaIP();
 
 	/**
 	 * Launch the application.
@@ -129,7 +132,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 		});
 		panel_1.add(btnPararServidor);
 
-		List<String> lista = buscaIp();
+		List<String> lista = listaIP.buscaIp();
 		cbxIp.setModel(new DefaultComboBoxModel<String>(new Vector<String>(lista)));
 		cbxIp.setSelectedIndex(0);
 
@@ -302,36 +305,6 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	 * ===================================================================================================
 	 */
 
-	// Método que faz a busca por IPs disponíveis.
-	private List<String> buscaIp() {
-
-		List<String> addrList = new ArrayList<String>();
-		try {
-			Enumeration<NetworkInterface> ifaces = NetworkInterface.getNetworkInterfaces();
-
-			while (ifaces.hasMoreElements()) {
-				NetworkInterface ifc = ifaces.nextElement();
-				if (ifc.isUp()) {
-					Enumeration<InetAddress> addresses = ifc.getInetAddresses();
-					while (addresses.hasMoreElements()) {
-
-						InetAddress addr = addresses.nextElement();
-
-						String ip = addr.getHostAddress();
-
-						if (ip.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")) {
-							addrList.add(ip);
-						}
-
-					}
-				}
-			}
-		} catch (SocketException e) {
-			e.printStackTrace();
-		}
-
-		return addrList;
-	}
 
 	// Método utilizado para bloquear o comboBox e o textField.
 	private void bloquearCampos(Boolean status) {

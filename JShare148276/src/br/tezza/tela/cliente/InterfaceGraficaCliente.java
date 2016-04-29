@@ -12,6 +12,7 @@ import java.rmi.registry.Registry;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,12 +21,14 @@ import javax.swing.border.EmptyBorder;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
+import br.tezza.buscaIP.ListaIP;
 import br.tezza.simple.date.format.DateFormat;
 import br.tezza.tela.servidor.InterfaceGraficaServidor;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -39,6 +42,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JTable tabelaResultadoBusca;
 	private JTextField txtIpServidor;
 	private JTextField txtMinhaPorta;
+	
+	private ListaIP listaIP = new ListaIP();
 
 	/**
 	 * Launch the application.
@@ -135,6 +140,10 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		cbxMeuIP = new JComboBox();
 		cbxMeuIP.setBounds(89, 78, 106, 20);
 		panel.add(cbxMeuIP);
+		
+		List<String> lista = listaIP.buscaIp();
+		cbxMeuIP.setModel(new DefaultComboBoxModel<String>(new Vector<String>(lista)));
+		cbxMeuIP.setSelectedIndex(0);
 		
 		JLabel lblPortaDisponvel = new JLabel("Porta Dispon\u00EDvel ");
 		lblPortaDisponvel.setBounds(205, 81, 86, 14);

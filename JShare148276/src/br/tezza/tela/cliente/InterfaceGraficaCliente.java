@@ -12,6 +12,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -23,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
+import br.dagostini.jshare.listarArquivo.ListarArquivos;
 import br.tezza.buscaIP.ListaIP;
 import br.tezza.simple.date.format.DateFormat;
 import br.tezza.tela.servidor.InterfaceGraficaServidor;
@@ -46,6 +48,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JTextField txtMinhaPorta;
 
 	private ListaIP listaIP = new ListaIP();
+	
+	private ListarArquivos listarArquivos = new ListarArquivos();
 
 	/**
 	 * Launch the application.
@@ -90,6 +94,10 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtNomeUsuario.setColumns(10);
 
 		btnDisponibilizarMeusArquivos = new JButton("Disponibilizar meus arquivos");
+		btnDisponibilizarMeusArquivos.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnDisponibilizarMeusArquivos.setBounds(10, 110, 278, 23);
 		panel.add(btnDisponibilizarMeusArquivos);
 
@@ -98,12 +106,14 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		panel.add(btnConectar);
 
 		txtBuscaArquivo = new JTextField();
+		txtBuscaArquivo.setEnabled(false);
 		txtBuscaArquivo.setToolTipText("");
 		txtBuscaArquivo.setColumns(10);
 		txtBuscaArquivo.setBounds(10, 173, 278, 20);
 		panel.add(txtBuscaArquivo);
 
 		btnBuscarArquivo = new JButton("Buscar Arquivo");
+		btnBuscarArquivo.setEnabled(false);
 		btnBuscarArquivo.setBounds(298, 172, 218, 23);
 		panel.add(btnBuscarArquivo);
 
@@ -128,6 +138,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtMinhaPorta.setColumns(10);
 
 		btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.setEnabled(false);
 		btnDesconectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
@@ -178,6 +189,23 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 				desconectarUsuario();
 			}
 
+		});
+		
+		btnDisponibilizarMeusArquivos.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				List<Arquivo> listaArquivos = new ArrayList<Arquivo>(listarArquivos.listarArquivo());
+				
+				try {
+					iServer.publicarListaArquivos(cliente, listaArquivos);
+				} catch (RemoteException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
+			}
 		});
 
 	}

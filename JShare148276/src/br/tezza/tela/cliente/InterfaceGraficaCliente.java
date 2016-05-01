@@ -247,6 +247,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JButton btnDisponibilizarMeusArquivos;
 	private JButton btnDesconectar;
 	private JButton btnBuscarArquivo;
+	private Cliente cliente;
 
 
 	/**
@@ -290,7 +291,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 			iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
 
-			Cliente cliente = new Cliente();
+			cliente = new Cliente();
 
 			cliente.setNome(txtNomeUsuario.getText());
 			cliente.setIp(cbxMeuIP.getSelectedItem().toString());
@@ -323,7 +324,14 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		
 		JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
 		
-		configuraBotoes(true);		
+		configuraBotoes(true);	
+		
+		try {
+			iServer.desconectar(cliente);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 

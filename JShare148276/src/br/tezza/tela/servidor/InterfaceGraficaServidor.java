@@ -239,7 +239,9 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	public void desconectar(Cliente c) throws RemoteException {
 		
 		listaClientes.remove(c.getIp());		
-		escreverTela("Usuário " + c.getNome() + "saiu.");
+		listaArquivosCliente.remove(c);
+	
+		escreverTela("Usuário: " + c.getNome() + ", saiu.");
 
 	}
 
@@ -284,7 +286,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			UnicastRemoteObject.unexportObject(this, true);
 			UnicastRemoteObject.unexportObject(registry, true);
 
-			escreverTela("O servidor foi encerrado");
+			escreverTela("O servidor foi encerrado.");
 
 			bloquearBotoes(false);		
 			bloquearCampos(true);
@@ -293,6 +295,10 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		listaClientes            = null;
+		listaArquivosCliente     = null;
+		listaArquivosEncontrados = null;
 
 	}
 

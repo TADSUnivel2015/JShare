@@ -47,9 +47,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JTextField txtIpServidor;
 	private JTextField txtMinhaPorta;
 
+	private int flag = 0;
+
 	private ListaIP listaIP = new ListaIP();
-	
+	private Cliente cliente = new Cliente();
+
 	private ListarArquivos listarArquivos = new ListarArquivos();
+	private List<Arquivo> listaArquivos;
 
 	/**
 	 * Launch the application.
@@ -178,7 +182,9 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		btnConectar.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+
 				conectar();
+
 			}
 		});
 
@@ -190,21 +196,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			}
 
 		});
-		
+
 		btnDisponibilizarMeusArquivos.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
-				List<Arquivo> listaArquivos = new ArrayList<Arquivo>(listarArquivos.listarArquivo());
-				
-				try {
-					iServer.publicarListaArquivos(cliente, listaArquivos);
-				} catch (RemoteException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
+
+				acoes();
 			}
 		});
 
@@ -275,7 +273,6 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JButton btnDisponibilizarMeusArquivos;
 	private JButton btnDesconectar;
 	private JButton btnBuscarArquivo;
-	private Cliente cliente;
 
 
 	/**
@@ -312,71 +309,106 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			return;
 		}
 
-		//Iniciando objetos para conexão.
-		try {
+		// Verifica se o usuário já disponibilizou seus arquivos.
+		if (flag == 0) {
+			
+			JOptionPane.showMessageDialog(null, "Antes de se conectar, disponibilize seus arquivos!");
+			return;
+		} else {
+			
+			flag = 0;
 
-			registry = LocateRegistry.getRegistry(host, 1818);
+			//Iniciando objetos para conexão.
+			try {
 
-			iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
+				registry = LocateRegistry.getRegistry(host, 1818);
 
-			cliente = new Cliente();
+				iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
 
-			cliente.setNome(txtNomeUsuario.getText());
-			cliente.setIp(cbxMeuIP.getSelectedItem().toString());
-			cliente.setPorta(Integer.parseInt(txtMinhaPorta.getText()));
+				cliente = new Cliente();
 
-			iServer.registrarCliente(cliente);
+				cliente.setNome(txtNomeUsuario.getText());
+				cliente.setIp(cbxMeuIP.getSelectedItem().toString());
+				cliente.setPorta(Integer.parseInt(txtMinhaPorta.getText()));
 
-			JOptionPane.showMessageDialog(this, "conectado!");
+				iServer.registrarCliente(cliente);
+				
+				enviarListaArquivos();
 
-		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+				JOptionPane.showMessageDialog(this, "conectado!");
+
+			} catch (RemoteException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		
 		configuraBotoes(false);
 	}
-	
+
 	protected void desconectarUsuario() {
-	
+
 		try {
-			
+
 			UnicastRemoteObject.unexportObject(this, true);
 		} catch (NoSuchObjectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
-		
+
 		configuraBotoes(true);	
-		
+
 		try {
 			iServer.desconectar(cliente);
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void configuraBotoes(Boolean status) {
-		
+
 		btnConectar.setEnabled(status);
 		btnDisponibilizarMeusArquivos.setEnabled(status);
-		
+
 		btnBuscarArquivo.setEnabled(!status);
 		btnDesconectar.setEnabled(!status);
-		
+
 		txtNomeUsuario.setEnabled(status);
 		txtIpServidor.setEnabled(status);
 		txtPortaServidor.setEnabled(status);
 		cbxMeuIP.setEnabled(status);
 		txtMinhaPorta.setEnabled(status);
-		
+
 		txtBuscaArquivo.setEnabled(!status);
+	}
+	
+	private void enviarListaArquivos() {
+		
+		try {
+			iServer.publicarListaArquivos(cliente, listaArquivos);
+		} catch (RemoteException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+	}
+	
+	// Método utilizado no botão Disponibilizar meus Arquivos.
+	private void acoes() {
+		
+		listaArquivos = new ArrayList<Arquivo>(listarArquivos.listarArquivo());
+
+		JOptionPane.showMessageDialog(null, "Lista de arquivos foi publicada!");
+		
+		btnDisponibilizarMeusArquivos.setEnabled(false);
+		
+		flag = 1;
+		
 	}
 }

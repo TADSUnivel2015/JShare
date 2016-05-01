@@ -178,33 +178,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		tabelaResultadoBusca = new JTable();
 		scrollPane.setViewportView(tabelaResultadoBusca);
+		
 
-		btnConectar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+		btnConectar.addActionListener(e -> conectar());
 
-				conectar();
+		btnDesconectar.addActionListener(e -> desconectarUsuario());
 
-			}
-		});
-
-		btnDesconectar.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				desconectarUsuario();
-			}
-
-		});
-
-		btnDisponibilizarMeusArquivos.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-
-				acoes();
-			}
-		});
+		btnDisponibilizarMeusArquivos.addActionListener(e -> acoes());
 
 	}
 

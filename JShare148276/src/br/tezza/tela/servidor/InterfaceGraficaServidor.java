@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -178,7 +179,6 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	private Map<String, Cliente> listaClientes = new HashMap<String, Cliente>();	
 	private Map<Cliente, List<Arquivo>> listaArquivosCliente = new HashMap<Cliente, List<Arquivo>>();
-	private Map<Cliente, List<Arquivo>> listaArquivosEncontrados = new HashMap<Cliente, List<Arquivo>>();
 
 	private SimpleDateFormat dateFormat = new DateFormat().formatoData();
 
@@ -202,28 +202,31 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 		listaClientes.put(c.getIp(), c);
 		escreverTela("Novo usuário: " + c.getNome());
 
+		System.out.println(c.toString());
+
 	}
 
 	@Override
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
 
 		listaArquivosCliente.put(c, lista);
+		System.out.println(c.toString());
 
 	}
 
 	@Override
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
-		
+
+		Map<Cliente, List<Arquivo>> listaArquivosEncontrados = new HashMap<Cliente, List<Arquivo>>();
+
 		// Percorrendo a HashMap principal.
 		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosCliente.entrySet()) {
 
 			// Percorrendo a List interna.
 			for(Arquivo arquivo: listaArquivosCliente.get(listaProcura.getKey())){
-				
+
 				// Pesquisando pelo nome.
 				if (arquivo.getNome().equals(nome)) {
-					
-					System.out.println(arquivo.getNome());
 
 					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 					Cliente novoCliente = new Cliente();
@@ -235,8 +238,6 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 					listaArquivos.add(arquivo);
 
 					listaArquivosEncontrados.put(novoCliente, listaArquivos);
-					
-					System.out.println(listaArquivosEncontrados.toString());
 
 				}
 
@@ -254,9 +255,9 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	}
 
 	@Override
-	public void desconectar(Cliente c) throws RemoteException {
+	public void desconectar(Cliente c) throws RemoteException {		
 
-		listaClientes.remove(c.getIp());		
+		listaClientes.remove(c.getIp());	
 		listaArquivosCliente.remove(c);
 
 		escreverTela("Usuário: " + c.getNome() + ", saiu.");
@@ -316,7 +317,6 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 		listaClientes            = null;
 		listaArquivosCliente     = null;
-		listaArquivosEncontrados = null;
 
 	}
 

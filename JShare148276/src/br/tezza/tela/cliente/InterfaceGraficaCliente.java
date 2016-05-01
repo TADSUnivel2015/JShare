@@ -42,6 +42,8 @@ import javax.swing.JTable;
 import javax.swing.JComboBox;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class InterfaceGraficaCliente extends JFrame implements IServer{
 
@@ -55,7 +57,6 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private int flag = 0;
 
 	private ListaIP listaIP = new ListaIP();
-	private Cliente cliente = new Cliente();
 
 	private ListarArquivos listarArquivos = new ListarArquivos();
 	private List<Arquivo> listaArquivos;
@@ -83,7 +84,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	 */
 	public InterfaceGraficaCliente() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 605, 449);
+		setBounds(100, 100, 627, 449);
 		contentPane = new JPanel();
 		contentPane.setToolTipText("Digite aqui sua busca...");
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -91,7 +92,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		contentPane.setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(5, 5, 574, 191);
+		panel.setBounds(5, 5, 596, 191);
 		contentPane.add(panel);
 
 		JLabel lblNome = new JLabel("Nome:");
@@ -109,7 +110,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		});
 
 		btnConectar = new JButton("Conectar");
-		btnConectar.setBounds(298, 110, 143, 23);
+		btnConectar.setBounds(298, 110, 175, 23);
 
 		txtBuscaArquivo = new JTextField();
 		txtBuscaArquivo.setBounds(0, 159, 336, 20);
@@ -118,7 +119,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtBuscaArquivo.setColumns(10);
 
 		btnBuscarArquivo = new JButton("Buscar Arquivo");
-		btnBuscarArquivo.setBounds(356, 158, 218, 23);
+		btnBuscarArquivo.setBounds(346, 158, 250, 23);
 		btnBuscarArquivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
@@ -142,7 +143,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtMinhaPorta.setColumns(10);
 
 		btnDesconectar = new JButton("Desconectar");
-		btnDesconectar.setBounds(461, 110, 113, 23);
+		btnDesconectar.setBounds(483, 110, 113, 23);
 		btnDesconectar.setEnabled(false);
 		btnDesconectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -184,14 +185,15 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		panel.add(txtPortaServidor);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(5, 207, 574, 160);
+		scrollPane.setBounds(5, 207, 596, 160);
 		contentPane.add(scrollPane);
 
 		tabelaResultadoBusca = new JTable();
 		scrollPane.setViewportView(tabelaResultadoBusca);
 		
-		JButton btnFazerDownload = new JButton("Fazer Download");
-		btnFazerDownload.setBounds(360, 371, 219, 30);
+		btnFazerDownload = new JButton("Fazer Download");
+		btnFazerDownload.setEnabled(false);
+		btnFazerDownload.setBounds(360, 371, 241, 30);
 		contentPane.add(btnFazerDownload);
 
 
@@ -268,6 +270,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JButton btnDisponibilizarMeusArquivos;
 	private JButton btnDesconectar;
 	private JButton btnBuscarArquivo;
+	private JButton btnFazerDownload;
 
 
 	/**
@@ -315,20 +318,16 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 			//Iniciando objetos para conexão.
 			try {
+				
+				Cliente cliente = informacoesCliente();
 
 				registry = LocateRegistry.getRegistry(host, 1818);
 
 				iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
 
-				cliente = new Cliente();
-
-				cliente.setNome(txtNomeUsuario.getText());
-				cliente.setIp(cbxMeuIP.getSelectedItem().toString());
-				cliente.setPorta(Integer.parseInt(txtMinhaPorta.getText()));
-
 				iServer.registrarCliente(cliente);
 
-				enviarListaArquivos();
+				enviarListaArquivos(cliente);
 
 				JOptionPane.showMessageDialog(this, "conectado!");
 
@@ -343,8 +342,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		configuraBotoes(false);
 	}
 
-	protected void desconectarUsuario() {
-
+	protected void desconectarUsuario() {	
+		
 		try {
 
 			if (servidor != null) {
@@ -364,7 +363,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		configuraBotoes(true);	
 		
 		try {
-			iServer.desconectar(cliente);
+			iServer.desconectar(informacoesCliente());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -387,9 +386,11 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtMinhaPorta.setEnabled(status);
 
 		txtBuscaArquivo.setEnabled(!status);
+		
+		btnFazerDownload.setEnabled(!status);
 	}
 
-	private void enviarListaArquivos() {
+	private void enviarListaArquivos(Cliente cliente) {
 
 		try {
 			iServer.publicarListaArquivos(cliente, listaArquivos);
@@ -422,11 +423,23 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			TableModel modelBusca = new ModeloTabela(listaArquivosEncontrados);
 
 			tabelaResultadoBusca.setModel(modelBusca);
+			
+			listaArquivosEncontrados = null;
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+	}
+	
+	private Cliente informacoesCliente() {
+		
+		Cliente cliente = new Cliente();
+		
+		cliente.setNome(txtNomeUsuario.getText());
+		cliente.setIp(cbxMeuIP.getSelectedItem().toString());
+		cliente.setPorta(Integer.parseInt(txtMinhaPorta.getText()));
+		
+		return cliente;
 	}
 }

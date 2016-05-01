@@ -85,6 +85,8 @@ public class Teste {
 		listaArquivosCliente.put(c2, arquivos2);
 		listaArquivosCliente.put(c3, arquivos3);
 		listaArquivosCliente.put(c4, arquivos4);
+		
+		listaArquivosCliente.remove(c1);
 
 
 

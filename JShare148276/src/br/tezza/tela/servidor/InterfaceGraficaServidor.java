@@ -57,7 +57,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	private JButton btnIniciarServidor;
 	private JComboBox cbxIp;
 	private JTextArea txtArea;
-	
+
 	private ListaIP listaIP = new ListaIP();
 
 	/**
@@ -198,7 +198,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
-		
+
 		listaClientes.put(c.getIp(), c);
 		escreverTela("Novo usuário: " + c.getNome());
 
@@ -206,26 +206,40 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	@Override
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
-		
+
 		listaArquivosCliente.put(c, lista);
 
 	}
 
 	@Override
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
-		
+
 		// Percorrendo a HashMap principal.
 		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosCliente.entrySet()) {
-			
+
+			// Percorrendo a List interna.
 			for(Arquivo arquivo: listaArquivosCliente.get(listaProcura.getKey())){
-				
-				System.out.println(arquivo.getNome());
-				System.out.println(arquivo.getTamanho());
+
+				// Pesquisando pelo nome.
+				if (arquivo.getNome() == nome) {
+
+					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
+					Cliente novoCliente = new Cliente();
+
+					novoCliente.setNome(listaProcura.getKey().getNome());
+					novoCliente.setIp(listaProcura.getKey().getIp());
+					novoCliente.setPorta(listaProcura.getKey().getPorta());
+
+					listaArquivos.add(arquivo);
+
+					listaArquivosEncontrados.put(novoCliente, listaArquivos);
+
+				}
+
 			}
-			
+
 		}
-		
-		
+
 		return listaArquivosEncontrados;
 	}
 
@@ -237,10 +251,10 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	@Override
 	public void desconectar(Cliente c) throws RemoteException {
-		
+
 		listaClientes.remove(c.getIp());		
 		listaArquivosCliente.remove(c);
-	
+
 		escreverTela("Usuário: " + c.getNome() + ", saiu.");
 
 	}
@@ -255,7 +269,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	 */
 
 	protected void iniciando() {
-		
+
 		String strPorta = txtPorta.getText().trim();
 		int intPorta = Integer.parseInt(strPorta);
 
@@ -295,7 +309,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		listaClientes            = null;
 		listaArquivosCliente     = null;
 		listaArquivosEncontrados = null;
@@ -344,7 +358,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 		bloquearBotoes(true);	
 
 		bloquearCampos(false);
-		
+
 		iniciarServidor(intPorta);
 
 

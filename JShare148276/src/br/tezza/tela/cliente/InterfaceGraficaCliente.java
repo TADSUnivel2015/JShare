@@ -13,6 +13,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -54,6 +55,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 	private ListarArquivos listarArquivos = new ListarArquivos();
 	private List<Arquivo> listaArquivos;
+	
+	private Map<Cliente, List<Arquivo>> listaArquivosEncontrados; 
 
 	/**
 	 * Launch the application.
@@ -117,6 +120,10 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		panel.add(txtBuscaArquivo);
 
 		btnBuscarArquivo = new JButton("Buscar Arquivo");
+		btnBuscarArquivo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnBuscarArquivo.setEnabled(false);
 		btnBuscarArquivo.setBounds(298, 172, 218, 23);
 		panel.add(btnBuscarArquivo);
@@ -185,10 +192,10 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		btnDesconectar.addActionListener(e -> desconectarUsuario());
 
 		btnDisponibilizarMeusArquivos.addActionListener(e -> acoes());
+		
+		btnBuscarArquivo.addActionListener(e -> perquisarArquivos(txtBuscaArquivo.getText().toString()));
 
 	}
-
-
 
 	/**
 	 * ===================================================================================================
@@ -388,7 +395,17 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		
 		btnDisponibilizarMeusArquivos.setEnabled(false);
 		
-		flag = 1;
-		
+		flag = 1;	
+	}
+	
+	private void perquisarArquivos(String nomeArquivo) {
+	
+		try {
+			listaArquivosEncontrados = iServer.procurarArquivo(nomeArquivo);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 	}
 }

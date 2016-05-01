@@ -213,15 +213,17 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	@Override
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
-
+		
 		// Percorrendo a HashMap principal.
 		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosCliente.entrySet()) {
 
 			// Percorrendo a List interna.
 			for(Arquivo arquivo: listaArquivosCliente.get(listaProcura.getKey())){
-
+				
 				// Pesquisando pelo nome.
-				if (arquivo.getNome() == nome) {
+				if (arquivo.getNome().equals(nome)) {
+					
+					System.out.println(arquivo.getNome());
 
 					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 					Cliente novoCliente = new Cliente();
@@ -233,6 +235,8 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 					listaArquivos.add(arquivo);
 
 					listaArquivosEncontrados.put(novoCliente, listaArquivos);
+					
+					System.out.println(listaArquivosEncontrados.toString());
 
 				}
 

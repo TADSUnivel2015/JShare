@@ -201,7 +201,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		btnDisponibilizarMeusArquivos.addActionListener(e -> acoes());
 
-		btnBuscarArquivo.addActionListener(e -> perquisarArquivos(txtBuscaArquivo.getText().toString()));
+		btnBuscarArquivo.addActionListener(e -> perquisarArquivos());
 
 	}
 
@@ -412,8 +412,10 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		flag = 1;	
 	}
 
-	private void perquisarArquivos(String nomeArquivo) {
-
+	private void perquisarArquivos() {
+		
+		String nomeArquivo = txtBuscaArquivo.getText();
+		
 		try {
 			listaArquivosEncontrados = iServer.procurarArquivo(nomeArquivo);
 

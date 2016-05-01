@@ -20,8 +20,8 @@ public class Teste {
 		List<Arquivo> arquivos2 = new ArrayList<Arquivo>();
 		List<Arquivo> arquivos3 = new ArrayList<Arquivo>();
 		List<Arquivo> arquivos4 = new ArrayList<Arquivo>();
-				
-		
+
+
 
 		Cliente c1 = new Cliente();
 		Cliente c2 = new Cliente();
@@ -68,18 +68,18 @@ public class Teste {
 
 		arquivos1.add(a1);
 		arquivos1.add(a2);
-		
+
 		arquivos2.add(a1);
 		arquivos2.add(a3);
-		
+
 		arquivos3.add(a1);
 		arquivos3.add(a2);
 		arquivos3.add(a3);
 		arquivos3.add(a4);
-		
+
 		arquivos4.add(a2);
 		arquivos4.add(a4);
-		
+
 
 		listaArquivosCliente.put(c1, arquivos1);
 		listaArquivosCliente.put(c2, arquivos2);
@@ -90,61 +90,59 @@ public class Teste {
 
 		// Percorrendo a HashMap principal.
 		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosCliente.entrySet()) {
-			
-			
+
+
 			System.out.println("Nome do Usuário: " + listaProcura.getKey().getNome());
-			
+
 			for(Arquivo arquivo: listaArquivosCliente.get(listaProcura.getKey())){
-				
+
 				System.out.println("\tNome do Arquivos  : " + arquivo.getNome());
 				System.out.println("\tTamanho do Arquivo: " + arquivo.getTamanho());
-				
+
 				if (arquivo.getNome() == "Photoshop") {
-					
+
 					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 					Cliente novoCliente = new Cliente();
-					
+
 					novoCliente.setNome(listaProcura.getKey().getNome());
 					novoCliente.setIp(listaProcura.getKey().getIp());
 					novoCliente.setPorta(listaProcura.getKey().getPorta());
-					
+
 					listaArquivos.add(arquivo);
-					
+
 					listaArquivosEncontrados.put(novoCliente, listaArquivos);
-					
-				}
-				
-				
-				
-				
+
+				}	
+
+
 			}
-			
+
 			System.out.println("\n");
 
 		}
-		
+
 		System.out.println("====================================================================\n\n");
 		System.out.println("Arquivos encontrados para: Flash");
 		System.out.println("\n\n====================================================================");
-		
-		
+
+
 		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosEncontrados.entrySet()) {
-			
-			
+
+
 			System.out.println("Nome do Usuário: " + listaProcura.getKey().getNome());
-			
+
 			for(Arquivo arquivo: listaArquivosEncontrados.get(listaProcura.getKey())){
-				
+
 				System.out.println("\tNome do Arquivos  : " + arquivo.getNome());
 				System.out.println("\tTamanho do Arquivo: " + arquivo.getTamanho());				
-				
+
 			}
-			
-			
+
+
 			System.out.println("\n");
 
 		}
-		
+
 	}
 
 }

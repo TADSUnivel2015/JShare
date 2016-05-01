@@ -83,7 +83,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		panel.add(lblNome);
 		
 		txtNomeUsuario = new JTextField();
-		txtNomeUsuario.setBounds(89, 6, 106, 20);
+		txtNomeUsuario.setBounds(81, 6, 312, 20);
 		panel.add(txtNomeUsuario);
 		txtNomeUsuario.setColumns(10);
 		
@@ -111,12 +111,12 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		
 		txtIpServidor = new JTextField();
 		txtIpServidor.setText("127.0.0.1");
-		txtIpServidor.setBounds(89, 37, 106, 20);
+		txtIpServidor.setBounds(81, 37, 103, 20);
 		panel.add(txtIpServidor);
 		txtIpServidor.setColumns(10);
 		
 		JLabel lblPorta = new JLabel("Porta Servidor:");
-		lblPorta.setBounds(205, 39, 103, 14);
+		lblPorta.setBounds(202, 43, 103, 14);
 		panel.add(lblPorta);
 		
 		txtMinhaPorta = new JTextField();
@@ -138,15 +138,15 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		panel.add(lblSeuIp);
 		
 		cbxMeuIP = new JComboBox();
-		cbxMeuIP.setBounds(89, 78, 106, 20);
+		cbxMeuIP.setBounds(81, 79, 103, 20);
 		panel.add(cbxMeuIP);
 		
 		List<String> lista = listaIP.buscaIp();
 		cbxMeuIP.setModel(new DefaultComboBoxModel<String>(new Vector<String>(lista)));
 		cbxMeuIP.setSelectedIndex(0);
 		
-		JLabel lblPortaDisponvel = new JLabel("Porta Dispon\u00EDvel ");
-		lblPortaDisponvel.setBounds(205, 81, 86, 14);
+		JLabel lblPortaDisponvel = new JLabel("Porta Dispon\u00EDvel:");
+		lblPortaDisponvel.setBounds(194, 82, 103, 14);
 		panel.add(lblPortaDisponvel);
 		
 		txtPortaServidor = new JTextField();

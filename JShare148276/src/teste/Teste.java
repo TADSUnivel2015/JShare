@@ -53,16 +53,16 @@ public class Teste {
 		 * Arquivos
 		 */
 
-		a1.setNome("Show das poderosas");
+		a1.setNome("Photoshop");
 		a1.setTamanho(256);
 
-		a2.setNome("Pablo");
+		a2.setNome("Eclipse");
 		a2.setTamanho(128);
 
-		a3.setNome("Valesca");
+		a3.setNome("CorelDraw");
 		a3.setTamanho(1024);
 
-		a4.setNome("Anita");
+		a4.setNome("Flash");
 		a4.setTamanho(2048);
 
 
@@ -99,7 +99,7 @@ public class Teste {
 				System.out.println("\tNome do Arquivos  : " + arquivo.getNome());
 				System.out.println("\tTamanho do Arquivo: " + arquivo.getTamanho());
 				
-				if (arquivo.getNome() == "Pablo") {
+				if (arquivo.getNome() == "Photoshop") {
 					
 					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 					Cliente novoCliente = new Cliente();
@@ -124,7 +124,7 @@ public class Teste {
 		}
 		
 		System.out.println("====================================================================\n\n");
-		System.out.println("Arquivos encontrados");
+		System.out.println("Arquivos encontrados para: Flash");
 		System.out.println("\n\n====================================================================");
 		
 		

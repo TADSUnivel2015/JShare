@@ -40,6 +40,8 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JComboBox;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 
 public class InterfaceGraficaCliente extends JFrame implements IServer{
 
@@ -81,7 +83,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	 */
 	public InterfaceGraficaCliente() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 557, 449);
+		setBounds(100, 100, 605, 449);
 		contentPane = new JPanel();
 		contentPane.setToolTipText("Digite aqui sua busca...");
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -89,83 +91,69 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		contentPane.setLayout(null);
 
 		JPanel panel = new JPanel();
-		panel.setBounds(5, 5, 526, 206);
+		panel.setBounds(5, 5, 574, 191);
 		contentPane.add(panel);
-		panel.setLayout(null);
 
 		JLabel lblNome = new JLabel("Nome:");
 		lblNome.setBounds(32, 9, 39, 14);
-		panel.add(lblNome);
 
 		txtNomeUsuario = new JTextField();
 		txtNomeUsuario.setBounds(81, 6, 312, 20);
-		panel.add(txtNomeUsuario);
 		txtNomeUsuario.setColumns(10);
 
 		btnDisponibilizarMeusArquivos = new JButton("Disponibilizar meus arquivos");
+		btnDisponibilizarMeusArquivos.setBounds(0, 110, 278, 23);
 		btnDisponibilizarMeusArquivos.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		btnDisponibilizarMeusArquivos.setBounds(10, 110, 278, 23);
-		panel.add(btnDisponibilizarMeusArquivos);
 
 		btnConectar = new JButton("Conectar");
-		btnConectar.setBounds(298, 110, 95, 23);
-		panel.add(btnConectar);
+		btnConectar.setBounds(298, 110, 143, 23);
 
 		txtBuscaArquivo = new JTextField();
+		txtBuscaArquivo.setBounds(0, 159, 336, 20);
 		txtBuscaArquivo.setEnabled(false);
 		txtBuscaArquivo.setToolTipText("");
 		txtBuscaArquivo.setColumns(10);
-		txtBuscaArquivo.setBounds(10, 173, 278, 20);
-		panel.add(txtBuscaArquivo);
 
 		btnBuscarArquivo = new JButton("Buscar Arquivo");
+		btnBuscarArquivo.setBounds(356, 158, 218, 23);
 		btnBuscarArquivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
 		btnBuscarArquivo.setEnabled(false);
-		btnBuscarArquivo.setBounds(298, 172, 218, 23);
-		panel.add(btnBuscarArquivo);
 
 		JLabel lblIp = new JLabel("IP Servidor:");
 		lblIp.setBounds(10, 40, 89, 14);
-		panel.add(lblIp);
 
 		txtIpServidor = new JTextField();
-		txtIpServidor.setText("127.0.0.1");
 		txtIpServidor.setBounds(81, 37, 103, 20);
-		panel.add(txtIpServidor);
+		txtIpServidor.setText("127.0.0.1");
 		txtIpServidor.setColumns(10);
 
 		JLabel lblPorta = new JLabel("Porta Servidor:");
-		lblPorta.setBounds(202, 43, 103, 14);
-		panel.add(lblPorta);
+		lblPorta.setBounds(202, 40, 95, 14);
 
 		txtMinhaPorta = new JTextField();
-		txtMinhaPorta.setText("1415");
 		txtMinhaPorta.setBounds(298, 79, 95, 20);
-		panel.add(txtMinhaPorta);
+		txtMinhaPorta.setText("1415");
 		txtMinhaPorta.setColumns(10);
 
 		btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.setBounds(461, 110, 113, 23);
 		btnDesconectar.setEnabled(false);
 		btnDesconectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
 		});
-		btnDesconectar.setBounds(403, 110, 113, 23);
-		panel.add(btnDesconectar);
 
 		JLabel lblSeuIp = new JLabel("Seu IP:");
 		lblSeuIp.setBounds(32, 81, 46, 14);
-		panel.add(lblSeuIp);
 
 		cbxMeuIP = new JComboBox();
 		cbxMeuIP.setBounds(81, 79, 103, 20);
-		panel.add(cbxMeuIP);
 
 		List<String> lista = listaIP.buscaIp();
 		cbxMeuIP.setModel(new DefaultComboBoxModel<String>(new Vector<String>(lista)));
@@ -173,20 +161,38 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		JLabel lblPortaDisponvel = new JLabel("Porta Dispon\u00EDvel:");
 		lblPortaDisponvel.setBounds(194, 82, 103, 14);
-		panel.add(lblPortaDisponvel);
 
 		txtPortaServidor = new JTextField();
-		txtPortaServidor.setText("1818");
 		txtPortaServidor.setBounds(298, 37, 95, 20);
-		panel.add(txtPortaServidor);
+		txtPortaServidor.setText("1818");
 		txtPortaServidor.setColumns(10);
+		panel.setLayout(null);
+		panel.add(lblNome);
+		panel.add(txtNomeUsuario);
+		panel.add(btnDisponibilizarMeusArquivos);
+		panel.add(btnConectar);
+		panel.add(txtBuscaArquivo);
+		panel.add(btnBuscarArquivo);
+		panel.add(lblIp);
+		panel.add(txtIpServidor);
+		panel.add(lblPorta);
+		panel.add(txtMinhaPorta);
+		panel.add(btnDesconectar);
+		panel.add(lblSeuIp);
+		panel.add(cbxMeuIP);
+		panel.add(lblPortaDisponvel);
+		panel.add(txtPortaServidor);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(5, 222, 526, 177);
+		scrollPane.setBounds(5, 207, 574, 160);
 		contentPane.add(scrollPane);
 
 		tabelaResultadoBusca = new JTable();
 		scrollPane.setViewportView(tabelaResultadoBusca);
+		
+		JButton btnFazerDownload = new JButton("Fazer Download");
+		btnFazerDownload.setBounds(360, 371, 219, 30);
+		contentPane.add(btnFazerDownload);
 
 
 		btnConectar.addActionListener(e -> conectar());

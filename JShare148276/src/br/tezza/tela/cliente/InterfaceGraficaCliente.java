@@ -21,6 +21,7 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.TableModel;
 
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
@@ -28,6 +29,7 @@ import br.dagostini.jshare.comun.IServer;
 import br.dagostini.jshare.listarArquivo.ListarArquivos;
 import br.tezza.buscaIP.ListaIP;
 import br.tezza.simple.date.format.DateFormat;
+import br.tezza.tableModel.ModeloTabela;
 import br.tezza.tela.servidor.InterfaceGraficaServidor;
 
 import javax.swing.JLabel;
@@ -55,7 +57,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 	private ListarArquivos listarArquivos = new ListarArquivos();
 	private List<Arquivo> listaArquivos;
-	
+
 	private Map<Cliente, List<Arquivo>> listaArquivosEncontrados; 
 
 	/**
@@ -185,14 +187,14 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		tabelaResultadoBusca = new JTable();
 		scrollPane.setViewportView(tabelaResultadoBusca);
-		
+
 
 		btnConectar.addActionListener(e -> conectar());
 
 		btnDesconectar.addActionListener(e -> desconectarUsuario());
 
 		btnDisponibilizarMeusArquivos.addActionListener(e -> acoes());
-		
+
 		btnBuscarArquivo.addActionListener(e -> perquisarArquivos(txtBuscaArquivo.getText().toString()));
 
 	}
@@ -298,11 +300,11 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		// Verifica se o usuário já disponibilizou seus arquivos.
 		if (flag == 0) {
-			
+
 			JOptionPane.showMessageDialog(null, "Antes de se conectar, disponibilize seus arquivos!");
 			return;
 		} else {
-			
+
 			flag = 0;
 
 			//Iniciando objetos para conexão.
@@ -319,7 +321,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 				cliente.setPorta(Integer.parseInt(txtMinhaPorta.getText()));
 
 				iServer.registrarCliente(cliente);
-				
+
 				enviarListaArquivos();
 
 				JOptionPane.showMessageDialog(this, "conectado!");
@@ -339,7 +341,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		try {
 
-			UnicastRemoteObject.unexportObject(this, true);
+			if (servidor != null) {
+				
+				UnicastRemoteObject.unexportObject(this, true);
+
+				servidor = null;
+			}
+
 		} catch (NoSuchObjectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -348,7 +356,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
 
 		configuraBotoes(true);	
-
+		
 		try {
 			iServer.desconectar(cliente);
 		} catch (RemoteException e) {
@@ -374,9 +382,9 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		txtBuscaArquivo.setEnabled(!status);
 	}
-	
+
 	private void enviarListaArquivos() {
-		
+
 		try {
 			iServer.publicarListaArquivos(cliente, listaArquivos);
 		} catch (RemoteException e1) {
@@ -385,27 +393,32 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		}
 
 	}
-	
+
 	// Método utilizado no botão Disponibilizar meus Arquivos.
 	private void acoes() {
-		
+
 		listaArquivos = new ArrayList<Arquivo>(listarArquivos.listarArquivo());
 
 		JOptionPane.showMessageDialog(null, "Lista de arquivos foi publicada!");
-		
+
 		btnDisponibilizarMeusArquivos.setEnabled(false);
-		
+
 		flag = 1;	
 	}
-	
+
 	private void perquisarArquivos(String nomeArquivo) {
-	
+
 		try {
 			listaArquivosEncontrados = iServer.procurarArquivo(nomeArquivo);
+
+			TableModel modelBusca = new ModeloTabela(listaArquivosEncontrados);
+
+			tabelaResultadoBusca.setModel(modelBusca);
+
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 	}
 }

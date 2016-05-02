@@ -1,10 +1,8 @@
 package br.tezza.tela.cliente;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.rmi.Naming;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -13,13 +11,20 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 
@@ -31,19 +36,6 @@ import br.tezza.buscaIP.ListaIP;
 import br.tezza.simple.date.format.DateFormat;
 import br.tezza.tableModel.ModeloTabela;
 import br.tezza.tela.servidor.InterfaceGraficaServidor;
-
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JComboBox;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class InterfaceGraficaCliente extends JFrame implements IServer{
 
@@ -322,7 +314,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 				Cliente cliente = informacoesCliente();
 
 				registry = LocateRegistry.getRegistry(host, 1818);
-
+				
 				iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
 
 				iServer.registrarCliente(cliente);

@@ -1,35 +1,11 @@
 package br.tezza.tela.servidor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.border.TitledBorder;
-
-import br.dagostini.jshare.comum.pojos.Arquivo;
-import br.dagostini.jshare.comun.Cliente;
-import br.dagostini.jshare.comun.IServer;
-import br.tezza.buscaIP.ListaIP;
-import br.tezza.simple.date.format.DateFormat;
-
-import javax.swing.JComboBox;
-import javax.swing.JTextField;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -38,16 +14,29 @@ import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.awt.event.ActionEvent;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import java.awt.Color;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+import br.dagostini.jshare.comum.pojos.Arquivo;
+import br.dagostini.jshare.comun.Cliente;
+import br.dagostini.jshare.comun.IServer;
+import br.tezza.buscaIP.ListaIP;
+import br.tezza.simple.date.format.DateFormat;
 
 public class InterfaceGraficaServidor extends JFrame implements IServer{
 
@@ -210,7 +199,6 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
 
 		listaArquivosCliente.put(c, lista);
-		System.out.println(c.toString());
 
 	}
 
@@ -226,7 +214,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			for(Arquivo arquivo: listaArquivosCliente.get(listaProcura.getKey())){
 
 				// Pesquisando pelo nome.
-				if (arquivo.getNome().equals(nome)) {
+				if (arquivo.getNome().contains(nome)) {
 
 					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 					Cliente novoCliente = new Cliente();

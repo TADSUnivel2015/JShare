@@ -191,8 +191,6 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 		listaClientes.put(c.getIp(), c);
 		escreverTela("Novo usuário: " + c.getNome());
 
-		System.out.println(c.toString());
-
 	}
 
 	@Override

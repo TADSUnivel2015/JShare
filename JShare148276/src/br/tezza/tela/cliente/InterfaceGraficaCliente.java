@@ -201,7 +201,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		contentPane.add(btnFazerDownload);
 
 
-		btnConectar.addActionListener(e -> conectar());
+		btnConectar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				conectar();
+				tornarServidor("JShare", Integer.parseInt(txtMinhaPorta.getText()));
+			}
+		});
 
 		btnDesconectar.addActionListener(e -> desconectarUsuario());
 
@@ -397,6 +403,22 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			iServer.desconectar(informacoesCliente());
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	
+	private void tornarServidor(String nomeServico, int intPorta) {
+
+		try {
+
+			iServer  = (IServer) UnicastRemoteObject.exportObject(this, 0);
+			registry = LocateRegistry.createRegistry(intPorta);
+			registry.rebind(nomeServico, iServer);
+
+		} catch (RemoteException e) {
+			JOptionPane.showMessageDialog(this, "Um erro foi detectado, verifique se a porta informada"
+					+ " já está sendo utilizada por outro processo.");
 			e.printStackTrace();
 		}
 

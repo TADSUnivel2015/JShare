@@ -191,21 +191,19 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		panel.add(txtPortaServidor);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(5, 207, 596, 160);
+		scrollPane.setBounds(5, 207, 596, 192);
 		contentPane.add(scrollPane);
 
 		tabelaResultadoBusca = new JTable();
 		tabelaResultadoBusca.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
+			
+				String portaServidor  = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 2);
+				String nomeArquivo    = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 3);
 			}
 		});
 		scrollPane.setViewportView(tabelaResultadoBusca);
-
-		btnFazerDownload = new JButton("Fazer Download");
-		btnFazerDownload.setEnabled(false);
-		btnFazerDownload.setBounds(360, 371, 241, 30);
-		contentPane.add(btnFazerDownload);
 
 
 		btnConectar.addActionListener(e -> {
@@ -311,7 +309,6 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JButton btnDisponibilizarMeusArquivos;
 	private JButton btnDesconectar;
 	private JButton btnBuscarArquivo;
-	private JButton btnFazerDownload;
 
 
 	/**
@@ -461,8 +458,6 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtMinhaPorta.setEnabled(status);
 
 		txtBuscaArquivo.setEnabled(!status);
-
-		btnFazerDownload.setEnabled(!status);
 	}
 
 	private void enviarListaArquivos(Cliente cliente) {

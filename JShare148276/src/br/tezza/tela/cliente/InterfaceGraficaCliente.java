@@ -3,6 +3,8 @@ package br.tezza.tela.cliente;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -46,7 +48,9 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private JTextField txtIpServidor;
 	private JTextField txtMinhaPorta;
 
-	private int flag = 0;
+	private int flagEnvioArquivo = 0;
+	private int flagInicioServico = 0;
+	
 
 	private ListaIP listaIP = new ListaIP();
 
@@ -75,7 +79,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	 * Create the frame.
 	 */
 	public InterfaceGraficaCliente() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 627, 449);
 		contentPane = new JPanel();
 		contentPane.setToolTipText("Digite aqui sua busca...");
@@ -103,6 +107,12 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		btnConectar = new JButton("Conectar");
 		btnConectar.setBounds(298, 110, 175, 23);
+		btnConectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				flagInicioServico = 1;
+			}
+		});
+		
 
 		txtBuscaArquivo = new JTextField();
 		txtBuscaArquivo.setBounds(0, 159, 336, 20);
@@ -114,6 +124,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		btnBuscarArquivo.setBounds(346, 158, 250, 23);
 		btnBuscarArquivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 			}
 		});
 		btnBuscarArquivo.setEnabled(false);
@@ -139,6 +150,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		btnDesconectar.setEnabled(false);
 		btnDesconectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				flagInicioServico = 0;
 			}
 		});
 
@@ -182,7 +194,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		tabelaResultadoBusca = new JTable();
 		scrollPane.setViewportView(tabelaResultadoBusca);
-		
+
 		btnFazerDownload = new JButton("Fazer Download");
 		btnFazerDownload.setEnabled(false);
 		btnFazerDownload.setBounds(360, 371, 241, 30);
@@ -196,6 +208,29 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		btnDisponibilizarMeusArquivos.addActionListener(e -> acoes());
 
 		btnBuscarArquivo.addActionListener(e -> perquisarArquivos());
+		
+		
+		
+		addWindowListener(new WindowAdapter()  
+        {  
+            public void windowClosing (WindowEvent e)  
+            {  
+                //caixa de dialogo retorna um inteiro  
+                int resposta = JOptionPane.showConfirmDialog(null,"Deseja finalizar essa operação?","Finalizar",JOptionPane.YES_NO_OPTION);  
+                  
+                //sim = 0, nao = 1  
+                if (resposta == 0 && flagInicioServico == 1)  
+                {  
+                	desconectarUsuario();
+                	
+                	System.exit(0);
+                     
+                }  else {
+                	System.exit(0);
+                }
+                  
+            }  
+        });  
 
 	}
 
@@ -288,33 +323,37 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		}
 
 		String strPorta = txtMinhaPorta.getText().trim();
-		if (!strPorta.matches("[0-9]+") || strPorta.length() > 5){
+		String strPortaServidor = txtPortaServidor.getText().trim();
+		if (!strPorta.matches("[0-9]+") || strPorta.length() > 5 || 
+				!strPortaServidor.matches("[0-9]+") || strPortaServidor.length() > 5){
 			JOptionPane.showMessageDialog(this, "O número da porta deve ser um valor de no máximo 5 digitos!");
 			return;
 		}
 
 		int intPorta = Integer.parseInt(strPorta);
-		if (intPorta < 1024 || intPorta > 65535){
+		int intPortaServidor = Integer.parseInt(strPortaServidor);
+		if ((intPorta < 1024 || intPorta > 65535) ||
+				(intPortaServidor < 1024 || intPortaServidor > 65535)){
 			JOptionPane.showMessageDialog(this, "O número da porta deve estar entre 1024 e 65535");
 			return;
 		}
 
 		// Verifica se o usuário já disponibilizou seus arquivos.
-		if (flag == 0) {
+		if (flagEnvioArquivo == 0) {
 
 			JOptionPane.showMessageDialog(null, "Antes de se conectar, disponibilize seus arquivos!");
 			return;
 		} else {
 
-			flag = 0;
+			flagEnvioArquivo = 0;
 
 			//Iniciando objetos para conexão.
 			try {
-				
+
 				Cliente cliente = informacoesCliente();
 
-				registry = LocateRegistry.getRegistry(host, 1818);
-				
+				registry = LocateRegistry.getRegistry(host, intPortaServidor);
+
 				iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
 
 				iServer.registrarCliente(cliente);
@@ -335,11 +374,11 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	}
 
 	protected void desconectarUsuario() {	
-		
+
 		try {
 
 			if (servidor != null) {
-				
+
 				UnicastRemoteObject.unexportObject(this, true);
 
 				servidor = null;
@@ -353,7 +392,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
 
 		configuraBotoes(true);	
-		
+
 		try {
 			iServer.desconectar(informacoesCliente());
 		} catch (RemoteException e) {
@@ -378,7 +417,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		txtMinhaPorta.setEnabled(status);
 
 		txtBuscaArquivo.setEnabled(!status);
-		
+
 		btnFazerDownload.setEnabled(!status);
 	}
 
@@ -402,20 +441,20 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		btnDisponibilizarMeusArquivos.setEnabled(false);
 
-		flag = 1;	
+		flagEnvioArquivo = 1;	
 	}
 
 	private void perquisarArquivos() {
-		
+
 		String nomeArquivo = txtBuscaArquivo.getText();
-		
+
 		try {
 			listaArquivosEncontrados = iServer.procurarArquivo(nomeArquivo);
 
 			TableModel modelBusca = new ModeloTabela(listaArquivosEncontrados);
 
 			tabelaResultadoBusca.setModel(modelBusca);
-			
+
 			listaArquivosEncontrados = null;
 
 		} catch (RemoteException e) {
@@ -423,15 +462,17 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private Cliente informacoesCliente() {
-		
+
 		Cliente cliente = new Cliente();
-		
+
 		cliente.setNome(txtNomeUsuario.getText());
 		cliente.setIp(cbxMeuIP.getSelectedItem().toString());
 		cliente.setPorta(Integer.parseInt(txtMinhaPorta.getText()));
-		
+
 		return cliente;
 	}
+	
+	
 }

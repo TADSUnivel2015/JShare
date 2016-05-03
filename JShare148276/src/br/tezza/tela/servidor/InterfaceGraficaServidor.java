@@ -6,6 +6,8 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -47,6 +49,8 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	private JButton btnIniciarServidor;
 	private JComboBox cbxIp;
 	private JTextArea txtArea;
+	
+	int flagInicioSevidor = 0;
 
 	private ListaIP listaIP = new ListaIP();
 
@@ -70,7 +74,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	 * Create the frame.
 	 */
 	public InterfaceGraficaServidor() {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 571, 443);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -146,6 +150,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				iniciando();
+				flagInicioSevidor = 1;
 			}
 		});
 
@@ -153,8 +158,29 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				encerrarServidor();
+				flagInicioSevidor = 0;
 			}
 		});
+		
+		addWindowListener(new WindowAdapter()  
+        {  
+            public void windowClosing (WindowEvent e)  
+            {  
+                //caixa de dialogo retorna um inteiro  
+                int resposta = JOptionPane.showConfirmDialog(null,"Deseja finalizar essa operação?","Finalizar",JOptionPane.YES_NO_OPTION);  
+                  
+				//sim = 0, nao = 1  
+                if (resposta == 0 && flagInicioSevidor  == 1)  
+                {  
+                	encerrarServidor();                	
+                	System.exit(0);
+                     
+                }  else {
+                	System.exit(0);
+                }
+                  
+            }  
+        }); 
 
 	}
 
@@ -287,6 +313,8 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 
 	protected void encerrarServidor(){
 
+		JOptionPane.showMessageDialog(this, "O servidor foi desconectado");		
+		
 		try {
 			UnicastRemoteObject.unexportObject(this, true);
 			UnicastRemoteObject.unexportObject(registry, true);

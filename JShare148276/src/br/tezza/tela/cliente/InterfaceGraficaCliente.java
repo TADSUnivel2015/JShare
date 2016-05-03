@@ -38,6 +38,8 @@ import br.tezza.buscaIP.ListaIP;
 import br.tezza.simple.date.format.DateFormat;
 import br.tezza.tableModel.ModeloTabela;
 import br.tezza.tela.servidor.InterfaceGraficaServidor;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class InterfaceGraficaCliente extends JFrame implements IServer{
 
@@ -193,6 +195,11 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		contentPane.add(scrollPane);
 
 		tabelaResultadoBusca = new JTable();
+		tabelaResultadoBusca.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+			}
+		});
 		scrollPane.setViewportView(tabelaResultadoBusca);
 
 		btnFazerDownload = new JButton("Fazer Download");
@@ -201,15 +208,15 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		contentPane.add(btnFazerDownload);
 
 
-		btnConectar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				conectar();
-				tornarServidor("JShare", Integer.parseInt(txtMinhaPorta.getText()));
-			}
+		btnConectar.addActionListener(e -> {
+			conectar();
+			tornarServidor(Integer.parseInt(txtMinhaPorta.getText()));
 		});
 
-		btnDesconectar.addActionListener(e -> desconectarUsuario());
+		btnDesconectar.addActionListener(e -> {
+			desconectarUsuario();
+			desconectarMeuServidor();
+		});
 
 		btnDisponibilizarMeusArquivos.addActionListener(e -> acoes());
 
@@ -228,6 +235,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
                 if (resposta == 0 && flagInicioServico == 1)  
                 {  
                 	desconectarUsuario();
+                	desconectarMeuServidor();
                 	
                 	System.exit(0);
                      
@@ -315,6 +323,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	 */
 
 	protected void conectar() {
+		
+		
 
 		meuNome = txtNomeUsuario.getText().trim();
 		if (meuNome.length() == 0) {
@@ -408,13 +418,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 	}
 	
-	private void tornarServidor(String nomeServico, int intPorta) {
+	private void tornarServidor(int intPorta) {
 
 		try {
 
 			iServer  = (IServer) UnicastRemoteObject.exportObject(this, 0);
 			registry = LocateRegistry.createRegistry(intPorta);
-			registry.rebind(nomeServico, iServer);
+			registry.rebind(iServer.NOME_SERVICO, iServer);
 
 		} catch (RemoteException e) {
 			JOptionPane.showMessageDialog(this, "Um erro foi detectado, verifique se a porta informada"
@@ -422,6 +432,18 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			e.printStackTrace();
 		}
 
+	}
+	
+	private void desconectarMeuServidor() {
+		
+		try {
+			UnicastRemoteObject.unexportObject(this, true);
+			UnicastRemoteObject.unexportObject(registry, true);
+		} catch (NoSuchObjectException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	private void configuraBotoes(Boolean status) {

@@ -1,5 +1,6 @@
 package br.tezza.tableModel;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,7 +12,7 @@ import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 
 public class ModeloTabela extends AbstractTableModel implements TableModel {
-
+	
 	private Object[][] matriz;
 	private int linhas;
 

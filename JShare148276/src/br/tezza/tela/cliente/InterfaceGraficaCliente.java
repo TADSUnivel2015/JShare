@@ -5,6 +5,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.rmi.NoSuchObjectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -97,6 +103,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		lblNome.setBounds(32, 9, 39, 14);
 
 		txtNomeUsuario = new JTextField();
+		txtNomeUsuario.setText("Alex Tezza");
 		txtNomeUsuario.setBounds(81, 6, 312, 20);
 		txtNomeUsuario.setColumns(10);
 
@@ -132,18 +139,18 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		btnBuscarArquivo.setEnabled(false);
 
 		JLabel lblIp = new JLabel("IP Servidor:");
-		lblIp.setBounds(10, 40, 89, 14);
+		lblIp.setBounds(32, 40, 89, 14);
 
 		txtIpServidor = new JTextField();
-		txtIpServidor.setBounds(81, 37, 103, 20);
+		txtIpServidor.setBounds(119, 37, 124, 20);
 		txtIpServidor.setText("127.0.0.1");
 		txtIpServidor.setColumns(10);
 
 		JLabel lblPorta = new JLabel("Porta Servidor:");
-		lblPorta.setBounds(202, 40, 95, 14);
+		lblPorta.setBounds(284, 40, 95, 14);
 
 		txtMinhaPorta = new JTextField();
-		txtMinhaPorta.setBounds(298, 79, 95, 20);
+		txtMinhaPorta.setBounds(378, 78, 95, 20);
 		txtMinhaPorta.setText("1415");
 		txtMinhaPorta.setColumns(10);
 
@@ -160,17 +167,17 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		lblSeuIp.setBounds(32, 81, 46, 14);
 
 		cbxMeuIP = new JComboBox();
-		cbxMeuIP.setBounds(81, 79, 103, 20);
+		cbxMeuIP.setBounds(119, 79, 124, 20);
 
 		List<String> lista = listaIP.buscaIp();
 		cbxMeuIP.setModel(new DefaultComboBoxModel<String>(new Vector<String>(lista)));
 		cbxMeuIP.setSelectedIndex(0);
 
 		JLabel lblPortaDisponvel = new JLabel("Porta Dispon\u00EDvel:");
-		lblPortaDisponvel.setBounds(194, 82, 103, 14);
+		lblPortaDisponvel.setBounds(276, 81, 103, 14);
 
 		txtPortaServidor = new JTextField();
-		txtPortaServidor.setBounds(298, 37, 95, 20);
+		txtPortaServidor.setBounds(378, 37, 95, 20);
 		txtPortaServidor.setText("1818");
 		txtPortaServidor.setColumns(10);
 		panel.setLayout(null);
@@ -197,10 +204,47 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		tabelaResultadoBusca = new JTable();
 		tabelaResultadoBusca.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent arg0) {
+			public void mouseClicked(MouseEvent mev) {
 			
-				String portaServidor  = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 2);
-				String nomeArquivo    = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 3);
+				if (mev.getClickCount() == 2) {
+					
+					String ipServidor = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 1);
+					
+					int portaServidor = (int) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 2);
+					
+					String nomeArquivo = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 3);
+					
+					try {
+						
+						tornarServidor(portaServidor);
+						
+						registry = LocateRegistry.getRegistry(ipServidor, portaServidor);
+						
+						iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
+						
+						Arquivo arquivo = new Arquivo();
+						arquivo.setNome(nomeArquivo);
+						
+						byte[] baixarArquivo = iServer.baixarArquivo(arquivo);
+						
+						writeFile(new File(".\\Downloads\\" + arquivo.getNome()), baixarArquivo);
+						
+						conectar();
+						
+						flagEnvioArquivo = 1;
+						
+//						desconectarMeuServidor();
+						
+					} catch (RemoteException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (NotBoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					
+				}
 			}
 		});
 		scrollPane.setViewportView(tabelaResultadoBusca);
@@ -208,17 +252,20 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		btnConectar.addActionListener(e -> {
 			conectar();
-			tornarServidor(Integer.parseInt(txtMinhaPorta.getText()));
 		});
 
 		btnDesconectar.addActionListener(e -> {
 			desconectarUsuario();
-			desconectarMeuServidor();
 		});
 
 		btnDisponibilizarMeusArquivos.addActionListener(e -> acoes());
 
-		btnBuscarArquivo.addActionListener(e -> perquisarArquivos());
+		btnBuscarArquivo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				perquisarArquivos();
+			}
+		});
 		
 		
 		
@@ -233,7 +280,6 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
                 if (resposta == 0 && flagInicioServico == 1)  
                 {  
                 	desconectarUsuario();
-                	desconectarMeuServidor();
                 	
                 	System.exit(0);
                      
@@ -274,7 +320,17 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 	@Override
 	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
-		// TODO Auto-generated method stub
+		
+		List<Arquivo> listaArquivos = getMyListaArquivos();
+		
+		for (Arquivo arquivo : listaArquivos) {
+			if (arquivo.getNome().contains(arq.getNome())){
+				byte[] readFile = readFile(new File(".\\Uploads\\" + arq.getNome()));
+				
+				return readFile;
+			}
+		}
+		
 		return null;
 	}
 
@@ -434,7 +490,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private void desconectarMeuServidor() {
 		
 		try {
-			UnicastRemoteObject.unexportObject(this, true);
+			UnicastRemoteObject.unexportObject(iServer, true);
 			UnicastRemoteObject.unexportObject(registry, true);
 		} catch (NoSuchObjectException e) {
 			// TODO Auto-generated catch block
@@ -486,12 +542,14 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private void perquisarArquivos() {
 
 		String nomeArquivo = txtBuscaArquivo.getText();
+		
+		System.out.println(nomeArquivo);
 
 		try {
 			listaArquivosEncontrados = iServer.procurarArquivo(nomeArquivo);
-
+			
 			TableModel modelBusca = new ModeloTabela(listaArquivosEncontrados);
-
+			
 			tabelaResultadoBusca.setModel(modelBusca);
 
 			listaArquivosEncontrados = null;
@@ -513,5 +571,46 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		return cliente;
 	}
 	
+	protected void writeFile(File arquivo, byte[] dados) {
+		try {
+			Files.write(Paths.get(arquivo.getPath()), dados, StandardOpenOption.CREATE);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	protected byte[] readFile(File arq) {
+		
+		Path path = Paths.get(arq.getPath());	
+		
+		try {
+			byte[] dados = Files.readAllBytes(path);
+			return dados;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
+		}	
+	}
+	
+	private List<Arquivo> getMyListaArquivos() {
+		File dirStart = new File(".\\Uploads");
+
+		List<Arquivo> listaArquivos = new ArrayList<>();
+
+		for (File file : dirStart.listFiles()) {
+			if (file.isFile()) {
+				Arquivo arquivo = new Arquivo();
+				arquivo.setNome(file.getName());
+				arquivo.setTamanho(file.length());
+				listaArquivos.add(arquivo);
+			}
+		}
+
+		/*
+		 * System.out.println("Arquivos"); for (Arquivo arq : listaArquivos) { System.out.println("\t" + arq.getTamanho() + "\t" + arq.getNome()); }
+		 */
+
+		return listaArquivos;
+	}
 }

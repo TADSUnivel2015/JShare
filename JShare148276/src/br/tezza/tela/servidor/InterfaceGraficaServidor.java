@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.Map.Entry;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -49,7 +50,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	private JButton btnIniciarServidor;
 	private JComboBox cbxIp;
 	private JTextArea txtArea;
-	
+
 	int flagInicioSevidor = 0;
 
 	private ListaIP listaIP = new ListaIP();
@@ -161,26 +162,26 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 				flagInicioSevidor = 0;
 			}
 		});
-		
+
 		addWindowListener(new WindowAdapter()  
-        {  
-            public void windowClosing (WindowEvent e)  
-            {  
-                //caixa de dialogo retorna um inteiro  
-                int resposta = JOptionPane.showConfirmDialog(null,"Deseja finalizar essa operação?","Finalizar",JOptionPane.YES_NO_OPTION);  
-                  
+		{  
+			public void windowClosing (WindowEvent e)  
+			{  
+				//caixa de dialogo retorna um inteiro  
+				int resposta = JOptionPane.showConfirmDialog(null,"Deseja finalizar essa operação?","Finalizar",JOptionPane.YES_NO_OPTION);  
+
 				//sim = 0, nao = 1  
-                if (resposta == 0 && flagInicioSevidor  == 1)  
-                {  
-                	encerrarServidor();                	
-                	System.exit(0);
-                     
-                }  else {
-                	System.exit(0);
-                }
-                  
-            }  
-        }); 
+				if (resposta == 0 && flagInicioSevidor  == 1)  
+				{  
+					encerrarServidor();                	
+					System.exit(0);
+
+				}  else {
+					System.exit(0);
+				}
+
+			}  
+		}); 
 
 	}
 
@@ -230,17 +231,16 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
 
 		Map<Cliente, List<Arquivo>> listaArquivosEncontrados = new HashMap<Cliente, List<Arquivo>>();
-
+		List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
+		
 		// Percorrendo a HashMap principal.
-		for(Map.Entry<Cliente, List<Arquivo>> listaProcura: listaArquivosCliente.entrySet()) {
-
+		for (Entry<Cliente, List<Arquivo>> listaProcura : listaArquivosCliente.entrySet()){
 			// Percorrendo a List interna.
-			for(Arquivo arquivo: listaArquivosCliente.get(listaProcura.getKey())){
-
+			
+			for (Arquivo arquivo : listaProcura.getValue()) {
 				// Pesquisando pelo nome.
-				if (arquivo.getNome().contains(nome)) {
+				if (arquivo.getNome().toLowerCase().contains(nome.toLowerCase())) {
 
-					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 					Cliente novoCliente = new Cliente();
 
 					novoCliente.setNome(listaProcura.getKey().getNome());
@@ -254,9 +254,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 				}
 
 			}
-
 		}
-
 		return listaArquivosEncontrados;
 	}
 
@@ -314,7 +312,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	protected void encerrarServidor(){
 
 		JOptionPane.showMessageDialog(this, "O servidor foi desconectado");		
-		
+
 		try {
 			UnicastRemoteObject.unexportObject(this, true);
 			UnicastRemoteObject.unexportObject(registry, true);

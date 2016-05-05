@@ -58,7 +58,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 	private int flagEnvioArquivo = 0;
 	private int flagInicioServico = 0;
-	
+
 
 	private ListaIP listaIP = new ListaIP();
 
@@ -121,7 +121,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 				flagInicioServico = 1;
 			}
 		});
-		
+
 
 		txtBuscaArquivo = new JTextField();
 		txtBuscaArquivo.setBounds(0, 159, 336, 20);
@@ -133,7 +133,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		btnBuscarArquivo.setBounds(346, 158, 250, 23);
 		btnBuscarArquivo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+
 			}
 		});
 		btnBuscarArquivo.setEnabled(false);
@@ -205,32 +205,32 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		tabelaResultadoBusca.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent mev) {
-			
+
 				if (mev.getClickCount() == 2) {
-					
+
 					String ipServidor = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 1);
-					
+
 					int portaServidor = (int) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 2);
-					
+
 					String nomeArquivo = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 3);
-					
+
 					try {
-						
+
 						tornarServidor(portaServidor);
-						
+
 						registryUsuario = LocateRegistry.getRegistry(ipServidor, portaServidor);
-						
+
 						iServerUsuario = (IServer) registryUsuario.lookup(IServer.NOME_SERVICO);
-						
+
 						Arquivo arquivo = new Arquivo();
 						arquivo.setNome(nomeArquivo);
-						
+
 						byte[] baixarArquivo = iServerUsuario.baixarArquivo(arquivo);
-						
+
 						writeFile(new File(".\\Downloads\\" + arquivo.getNome()), baixarArquivo);
-						
-//						desconectarMeuServidor();
-						
+
+						//						desconectarMeuServidor();
+
 					} catch (RemoteException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -238,8 +238,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					
-					
+
+
 				}
 			}
 		});
@@ -262,29 +262,29 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 				perquisarArquivos();
 			}
 		});
-		
-		
-		
+
+
+
 		addWindowListener(new WindowAdapter()  
-        {  
-            public void windowClosing (WindowEvent e)  
-            {  
-                //caixa de dialogo retorna um inteiro  
-                int resposta = JOptionPane.showConfirmDialog(null,"Deseja finalizar essa operação?","Finalizar",JOptionPane.YES_NO_OPTION);  
-                  
-                //sim = 0, nao = 1  
-                if (resposta == 0 && flagInicioServico == 1)  
-                {  
-                	desconectarUsuario();
-                	
-                	System.exit(0);
-                     
-                }  else {
-                	System.exit(0);
-                }
-                  
-            }  
-        });  
+		{  
+			public void windowClosing (WindowEvent e)  
+			{  
+				//caixa de dialogo retorna um inteiro  
+				int resposta = JOptionPane.showConfirmDialog(null,"Deseja finalizar essa operação?","Finalizar",JOptionPane.YES_NO_OPTION);  
+
+				//sim = 0, nao = 1  
+				if (resposta == 0 && flagInicioServico == 1)  
+				{  
+					desconectarUsuario();
+
+					System.exit(0);
+
+				}  else {
+					System.exit(0);
+				}
+
+			}  
+		});  
 
 	}
 
@@ -316,17 +316,17 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 	@Override
 	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
-		
+
 		List<Arquivo> listaArquivos = getMyListaArquivos();
-		
+
 		for (Arquivo arquivo : listaArquivos) {
 			if (arquivo.getNome().contains(arq.getNome())){
 				byte[] readFile = readFile(new File(".\\Uploads\\" + arq.getNome()));
-				
+
 				return readFile;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -374,8 +374,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	 */
 
 	protected void conectar() {
-		
-		
+
+
 
 		meuNome = txtNomeUsuario.getText().trim();
 		if (meuNome.length() == 0) {
@@ -446,11 +446,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 			if (servidor != null) {
 
-				UnicastRemoteObject.unexportObject(this, true);
-				
-				JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
-
-				configuraBotoes(true);	
+				UnicastRemoteObject.unexportObject(this, true);	
 
 				servidor = null;
 			}
@@ -460,7 +456,9 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			e.printStackTrace();
 		}
 
-		
+		JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
+
+		configuraBotoes(true);
 
 		try {
 			iServer.desconectar(informacoesCliente());
@@ -470,7 +468,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		}
 
 	}
-	
+
 	private void tornarServidor(int intPorta) {
 
 		try {
@@ -486,17 +484,17 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		}
 
 	}
-	
+
 	private void desconectarMeuServidor() {
-		
+
 		try {
-//			UnicastRemoteObject.unexportObject(iserver, true);
+			//			UnicastRemoteObject.unexportObject(iserver, true);
 			UnicastRemoteObject.unexportObject(registryUsuario, true);
 		} catch (NoSuchObjectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	private void configuraBotoes(Boolean status) {
@@ -532,30 +530,35 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		listaArquivos = new ArrayList<Arquivo>(listarArquivos.listarArquivo());
 
-		JOptionPane.showMessageDialog(null, "Lista de arquivos foi publicada!");
+		if (listaArquivos == null) {
+			JOptionPane.showMessageDialog(this, "Você não possui arquivos! Adicione algum na suas pasta Uploads!");
+		} else {
 
-		btnDisponibilizarMeusArquivos.setEnabled(false);
+			JOptionPane.showMessageDialog(null, "Lista de arquivos foi publicada!");
 
-		flagEnvioArquivo = 1;	
+			btnDisponibilizarMeusArquivos.setEnabled(false);
+
+			flagEnvioArquivo = 1;
+		}
 	}
 
 	private void perquisarArquivos() {
 
 		String nomeArquivo = txtBuscaArquivo.getText();
-		
+
 		System.out.println(nomeArquivo);
 
 		try {
 			listaArquivosEncontrados = iServer.procurarArquivo(nomeArquivo);
-			
+
 			if (listaArquivosEncontrados == null) {
 				JOptionPane.showMessageDialog(this, "Não existem arquivos!");
 			} else {
-			
+
 				TableModel modelBusca = new ModeloTabela(listaArquivosEncontrados);
-				
+
 				tabelaResultadoBusca.setModel(modelBusca);
-	
+
 				listaArquivosEncontrados = null;
 			}
 
@@ -575,7 +578,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		return cliente;
 	}
-	
+
 	protected void writeFile(File arquivo, byte[] dados) {
 		try {
 			Files.write(Paths.get(arquivo.getPath()), dados, StandardOpenOption.CREATE);
@@ -584,11 +587,11 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected byte[] readFile(File arq) {
-		
+
 		Path path = Paths.get(arq.getPath());	
-		
+
 		try {
 			byte[] dados = Files.readAllBytes(path);
 			return dados;
@@ -597,7 +600,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			throw new RuntimeException(e);
 		}	
 	}
-	
+
 	private List<Arquivo> getMyListaArquivos() {
 		File dirStart = new File(".\\Uploads");
 

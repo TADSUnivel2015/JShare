@@ -317,11 +317,9 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	@Override
 	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
 
-		List<Arquivo> listaArquivos = getMyListaArquivos();
-
 		for (Arquivo arquivo : listaArquivos) {
 			if (arquivo.getNome().contains(arq.getNome())){
-				byte[] readFile = readFile(new File(".\\Uploads\\" + arq.getNome()));
+				byte[] readFile = lerArquivo(new File(".\\Uploads\\" + arq.getNome()));
 
 				return readFile;
 			}
@@ -588,7 +586,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		}
 	}
 
-	protected byte[] readFile(File arq) {
+	protected byte[] lerArquivo(File arq) {
 
 		Path path = Paths.get(arq.getPath());	
 
@@ -599,22 +597,5 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			// TODO Auto-generated catch block
 			throw new RuntimeException(e);
 		}	
-	}
-
-	private List<Arquivo> getMyListaArquivos() {
-		File dirStart = new File(".\\Uploads");
-
-		List<Arquivo> listaArquivos = new ArrayList<>();
-
-		for (File file : dirStart.listFiles()) {
-			if (file.isFile()) {
-				Arquivo arquivo = new Arquivo();
-				arquivo.setNome(file.getName());
-				arquivo.setTamanho(file.length());
-				listaArquivos.add(arquivo);
-			}
-		}
-
-		return listaArquivos;
 	}
 }

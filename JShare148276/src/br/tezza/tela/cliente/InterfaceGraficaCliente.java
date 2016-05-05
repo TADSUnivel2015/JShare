@@ -206,42 +206,32 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			@Override
 			public void mouseClicked(MouseEvent mev) {
 
-				if (mev.getClickCount() == 2) {
+				String ipServidor = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 1);
 
-					String ipServidor = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 1);
+				int portaServidor = (int) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 2);
 
-					int portaServidor = (int) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 2);
+				String nomeArquivo = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 3);
 
-					String nomeArquivo = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 3);
+				try {
 
-					try {
+					criarServidor(portaServidor, ipServidor);
 
-						tornarServidor(portaServidor);
+					Arquivo arquivo = new Arquivo();
+					arquivo.setNome(nomeArquivo);
 
-						registryUsuario = LocateRegistry.getRegistry(ipServidor, portaServidor);
+					byte[] baixarArquivo = iServerUsuario.baixarArquivo(arquivo);
 
-						iServerUsuario = (IServer) registryUsuario.lookup(IServer.NOME_SERVICO);
+					writeFile(new File(".\\Downloads\\" + arquivo.getNome()), baixarArquivo);
 
-						Arquivo arquivo = new Arquivo();
-						arquivo.setNome(nomeArquivo);
+					//					desconectarMeuServidor();
 
-						byte[] baixarArquivo = iServerUsuario.baixarArquivo(arquivo);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
 
-						writeFile(new File(".\\Downloads\\" + arquivo.getNome()), baixarArquivo);
-
-						//						desconectarMeuServidor();
-
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NotBoundException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-
-				}
 			}
+
 		});
 		scrollPane.setViewportView(tabelaResultadoBusca);
 
@@ -439,6 +429,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	}
 
 	protected void desconectarUsuario() {	
+		
+		flagInicioServico = 0;
 
 		try {
 
@@ -467,33 +459,44 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 	}
 
-	private void tornarServidor(int intPorta) {
+	private void criarServidor(int intPorta, String strIP) {
 
-		try {
+		if (flagInicioServico != 1) {
+			try {
 
-			iServerUsuario  = (IServer) UnicastRemoteObject.exportObject(this, 0);
-			registryUsuario = LocateRegistry.createRegistry(intPorta);
-			registryUsuario.rebind(iServerUsuario.NOME_SERVICO, iServerUsuario);
+				iServerUsuario  = (IServer) UnicastRemoteObject.exportObject(this, 0);
+				registryUsuario = LocateRegistry.createRegistry(intPorta);
+				registryUsuario.rebind(iServerUsuario.NOME_SERVICO, iServerUsuario);
 
-		} catch (RemoteException e) {
-			JOptionPane.showMessageDialog(this, "Um erro foi detectado, verifique se a porta informada"
-					+ " já está sendo utilizada por outro processo.");
-			e.printStackTrace();
-		}
+				registryUsuario = LocateRegistry.getRegistry(strIP, intPorta);
+
+				iServerUsuario = (IServer) registryUsuario.lookup(IServer.NOME_SERVICO);
+
+			} catch (RemoteException e) {
+				JOptionPane.showMessageDialog(this, "Um erro foi detectado, verifique se a porta informada"
+						+ " já está sendo utilizada por outro processo.");
+				e.printStackTrace();
+			} catch (NotBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} 
+
 
 	}
 
-	private void desconectarMeuServidor() {
-
-		try {
-			//			UnicastRemoteObject.unexportObject(iserver, true);
-			UnicastRemoteObject.unexportObject(registryUsuario, true);
-		} catch (NoSuchObjectException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
+	//	private void desconectarMeuServidor() {
+	//
+	//		try {
+	//			UnicastRemoteObject.unexportObject(iServerUsuario, true);
+	//			UnicastRemoteObject.unexportObject(registryUsuario, true);
+	//		} catch (NoSuchObjectException e) {
+	//			// TODO Auto-generated catch block
+	//			e.printStackTrace();
+	//		}
+	//
+	//	}
 
 	private void configuraBotoes(Boolean status) {
 

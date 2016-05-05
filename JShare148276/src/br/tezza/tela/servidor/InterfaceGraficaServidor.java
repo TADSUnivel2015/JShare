@@ -231,7 +231,6 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
 
 		Map<Cliente, List<Arquivo>> listaArquivosEncontrados = new HashMap<Cliente, List<Arquivo>>();
-		List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 		
 		// Percorrendo a HashMap principal.
 		for (Entry<Cliente, List<Arquivo>> listaProcura : listaArquivosCliente.entrySet()){
@@ -240,7 +239,7 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 			for (Arquivo arquivo : listaProcura.getValue()) {
 				// Pesquisando pelo nome.
 				if (arquivo.getNome().toLowerCase().contains(nome.toLowerCase())) {
-
+					List<Arquivo> listaArquivos = new ArrayList<Arquivo>();
 					Cliente novoCliente = new Cliente();
 
 					novoCliente.setNome(listaProcura.getKey().getNome());
@@ -268,10 +267,15 @@ public class InterfaceGraficaServidor extends JFrame implements IServer{
 	public void desconectar(Cliente c) throws RemoteException {		
 
 		listaClientes.remove(c.getIp());	
-		listaArquivosCliente.remove(c);
+		for (Entry<Cliente, List<Arquivo>> listaProcura : listaArquivosCliente.entrySet()){
+			
+			if (listaProcura.getKey().getNome().equals(c.getNome())){
+				listaArquivosCliente.remove(listaProcura.getKey());
+			}
+		
+		}		
 
 		escreverTela("Usuário: " + c.getNome() + ", saiu.");
-
 	}
 
 

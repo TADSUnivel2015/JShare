@@ -218,20 +218,16 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 						
 						tornarServidor(portaServidor);
 						
-						registry = LocateRegistry.getRegistry(ipServidor, portaServidor);
+						registryUsuario = LocateRegistry.getRegistry(ipServidor, portaServidor);
 						
-						iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
+						iServerUsuario = (IServer) registryUsuario.lookup(IServer.NOME_SERVICO);
 						
 						Arquivo arquivo = new Arquivo();
 						arquivo.setNome(nomeArquivo);
 						
-						byte[] baixarArquivo = iServer.baixarArquivo(arquivo);
+						byte[] baixarArquivo = iServerUsuario.baixarArquivo(arquivo);
 						
 						writeFile(new File(".\\Downloads\\" + arquivo.getNome()), baixarArquivo);
-						
-						conectar();
-						
-						flagEnvioArquivo = 1;
 						
 //						desconectarMeuServidor();
 						
@@ -353,8 +349,10 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private SimpleDateFormat dateFormat = new DateFormat().formatoData();
 
 	private IServer iServer;
+	private IServer iServerUsuario;
 
 	private Registry registry;
+	private Registry registryUsuario;
 
 	private InterfaceGraficaServidor servidor;
 
@@ -449,6 +447,10 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			if (servidor != null) {
 
 				UnicastRemoteObject.unexportObject(this, true);
+				
+				JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
+
+				configuraBotoes(true);	
 
 				servidor = null;
 			}
@@ -458,9 +460,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			e.printStackTrace();
 		}
 
-		JOptionPane.showMessageDialog(this, "Você se desconectou do Servidor...");
-
-		configuraBotoes(true);	
+		
 
 		try {
 			iServer.desconectar(informacoesCliente());
@@ -475,9 +475,9 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		try {
 
-			iServer  = (IServer) UnicastRemoteObject.exportObject(this, 0);
-			registry = LocateRegistry.createRegistry(intPorta);
-			registry.rebind(iServer.NOME_SERVICO, iServer);
+			iServerUsuario  = (IServer) UnicastRemoteObject.exportObject(this, 0);
+			registryUsuario = LocateRegistry.createRegistry(intPorta);
+			registryUsuario.rebind(iServerUsuario.NOME_SERVICO, iServerUsuario);
 
 		} catch (RemoteException e) {
 			JOptionPane.showMessageDialog(this, "Um erro foi detectado, verifique se a porta informada"
@@ -490,8 +490,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private void desconectarMeuServidor() {
 		
 		try {
-			UnicastRemoteObject.unexportObject(iServer, true);
-			UnicastRemoteObject.unexportObject(registry, true);
+//			UnicastRemoteObject.unexportObject(iserver, true);
+			UnicastRemoteObject.unexportObject(registryUsuario, true);
 		} catch (NoSuchObjectException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -548,11 +548,16 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 		try {
 			listaArquivosEncontrados = iServer.procurarArquivo(nomeArquivo);
 			
-			TableModel modelBusca = new ModeloTabela(listaArquivosEncontrados);
+			if (listaArquivosEncontrados == null) {
+				JOptionPane.showMessageDialog(this, "Não existem arquivos!");
+			} else {
 			
-			tabelaResultadoBusca.setModel(modelBusca);
-
-			listaArquivosEncontrados = null;
+				TableModel modelBusca = new ModeloTabela(listaArquivosEncontrados);
+				
+				tabelaResultadoBusca.setModel(modelBusca);
+	
+				listaArquivosEncontrados = null;
+			}
 
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block
@@ -606,10 +611,6 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 				listaArquivos.add(arquivo);
 			}
 		}
-
-		/*
-		 * System.out.println("Arquivos"); for (Arquivo arq : listaArquivos) { System.out.println("\t" + arq.getTamanho() + "\t" + arq.getNome()); }
-		 */
 
 		return listaArquivos;
 	}

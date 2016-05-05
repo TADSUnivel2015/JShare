@@ -11,7 +11,7 @@ public class ListarArquivos {
 
 	public List<Arquivo> listarArquivo() {
 
-		File dirStart = new File(".\\Uploads");
+		File dirStart = new File("C:\\JShare\\Uploads");
 
 		List<Arquivo> listaArquivos = new ArrayList<>();
 

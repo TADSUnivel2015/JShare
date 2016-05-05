@@ -213,22 +213,26 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 				String nomeArquivo = (String) tabelaResultadoBusca.getValueAt(tabelaResultadoBusca.getSelectedRow(), 3);
 
 				try {
+					registry = LocateRegistry.getRegistry(ipServidor, portaServidor);
 
-					criarServidor(portaServidor, ipServidor);
+					IServer servicoCliente = (IServer) registry.lookup(IServer.NOME_SERVICO);
+
+					servicoCliente.registrarCliente(informacoesCliente());
 
 					Arquivo arquivo = new Arquivo();
-					arquivo.setNome(nomeArquivo);
+					arquivo.setNome((String) nomeArquivo);
 
-					byte[] baixarArquivo = iServerUsuario.baixarArquivo(arquivo);
+					byte[] baixarArquivo = servicoCliente.baixarArquivo(arquivo);
 
-					writeFile(new File(".\\Downloads\\" + arquivo.getNome()), baixarArquivo);
-
-					//					desconectarMeuServidor();
+					writeFile(new File("C:\\JShare\\Downloads\\" + arquivo.getNome()), baixarArquivo);
+					
+					JOptionPane.showMessageDialog(null, "Download concluido!");
 
 				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
-				} 
+				} catch (NotBoundException e) {
+					e.printStackTrace();
+				}
 
 			}
 
@@ -309,7 +313,7 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 
 		for (Arquivo arquivo : listaArquivos) {
 			if (arquivo.getNome().contains(arq.getNome())){
-				byte[] readFile = lerArquivo(new File(".\\Uploads\\" + arq.getNome()));
+				byte[] readFile = lerArquivo(new File("C:\\JShare\\Uploads\\" + arq.getNome()));
 
 				return readFile;
 			}
@@ -337,12 +341,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	private SimpleDateFormat dateFormat = new DateFormat().formatoData();
 
 	private IServer iServer;
-	private IServer iServerUsuario;
 
 	private Registry registry;
-	private Registry registryUsuario;
-
-	private InterfaceGraficaServidor servidor;
 
 	private String meuNome;
 	private JTextField txtPortaServidor;
@@ -405,15 +405,13 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			//Iniciando objetos para conex„o.
 			try {
 
-				Cliente cliente = informacoesCliente();
-
 				registry = LocateRegistry.getRegistry(host, intPortaServidor);
 
 				iServer = (IServer) registry.lookup(IServer.NOME_SERVICO);
 
-				iServer.registrarCliente(cliente);
+				enviarListaArquivos(informacoesCliente());
 
-				enviarListaArquivos(cliente);
+				lancarMeuServico();
 
 				JOptionPane.showMessageDialog(this, "conectado!");
 
@@ -429,22 +427,8 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 	}
 
 	protected void desconectarUsuario() {	
-		
+
 		flagInicioServico = 0;
-
-		try {
-
-			if (servidor != null) {
-
-				UnicastRemoteObject.unexportObject(this, true);	
-
-				servidor = null;
-			}
-
-		} catch (NoSuchObjectException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
 		JOptionPane.showMessageDialog(this, "VocÍ se desconectou do Servidor...");
 
@@ -456,47 +440,25 @@ public class InterfaceGraficaCliente extends JFrame implements IServer{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
-	private void criarServidor(int intPorta, String strIP) {
+	private void lancarMeuServico() {
 
-		if (flagInicioServico != 1) {
-			try {
+		int intPorta = Integer.parseInt(txtMinhaPorta.getText());
 
-				iServerUsuario  = (IServer) UnicastRemoteObject.exportObject(this, 0);
-				registryUsuario = LocateRegistry.createRegistry(intPorta);
-				registryUsuario.rebind(iServerUsuario.NOME_SERVICO, iServerUsuario);
+		try {
 
-				registryUsuario = LocateRegistry.getRegistry(strIP, intPorta);
+			IServer meuServer = (IServer) UnicastRemoteObject.exportObject(this, 0);
+			registry = LocateRegistry.createRegistry(intPorta);
 
-				iServerUsuario = (IServer) registryUsuario.lookup(IServer.NOME_SERVICO);
+			registry.rebind(IServer.NOME_SERVICO, meuServer);
 
-			} catch (RemoteException e) {
-				JOptionPane.showMessageDialog(this, "Um erro foi detectado, verifique se a porta informada"
-						+ " j· est· sendo utilizada por outro processo.");
-				e.printStackTrace();
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-		} 
-
+		} catch (RemoteException e) {
+			JOptionPane.showMessageDialog(this, "Erro criando registro, verifique se a porta j√° n√£o est√° sendo usada.");
+			e.printStackTrace();
+		}
 
 	}
-
-	//	private void desconectarMeuServidor() {
-	//
-	//		try {
-	//			UnicastRemoteObject.unexportObject(iServerUsuario, true);
-	//			UnicastRemoteObject.unexportObject(registryUsuario, true);
-	//		} catch (NoSuchObjectException e) {
-	//			// TODO Auto-generated catch block
-	//			e.printStackTrace();
-	//		}
-	//
-	//	}
 
 	private void configuraBotoes(Boolean status) {
 
